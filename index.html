@@ -134,8 +134,40 @@
         .result-label { font-size: 13px; color: var(--text-muted); margin-bottom: 5px; }
         .result-value { font-size: 18px; color: var(--primary-color); font-weight: 800; }
 
-        /* 历史记录 */
-        .history-section { margin-top: 35px; border-top: 1px dashed #e0e0e0; padding-top: 25px; }
+        /* ================= 历史记录折叠区样式 ================= */
+        .toggle-history-btn {
+            width: 100%;
+            padding: 14px;
+            background-color: transparent;
+            color: var(--primary-hover);
+            border: 2px dashed #f8bbd0;
+            border-radius: 14px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            margin-top: 25px;
+            transition: all 0.3s;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 8px;
+        }
+        .toggle-history-btn:hover {
+            background-color: var(--primary-light);
+            border-color: var(--primary-hover);
+        }
+        
+        .history-content {
+            display: none;
+            margin-top: 20px;
+            border-top: 1px dashed #e0e0e0;
+            padding-top: 20px;
+            animation: fadeIn 0.4s ease;
+        }
+        .history-content.show {
+            display: block;
+        }
+
         .history-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; }
         .history-header h2 { font-size: 16px; margin: 0;}
         .clear-btn { padding: 0; border: none; background: none; color: #aab7c4; font-size: 13px; font-weight: normal; }
@@ -164,7 +196,7 @@
         }
         .delete-item:hover { color: #ff5252; background: none; }
 
-        /* ================= 新增：天气组件 ================= */
+        /* ================= 天气组件 ================= */
         .weather-widget {
             display: flex;
             align-items: center;
@@ -220,16 +252,18 @@
             background: white; border-radius: 50%; padding: 2px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); line-height: 1;
         }
 
-        /* ================= 新增：温馨贴士卡片 ================= */
+        /* ================= 温馨贴士卡片 ================= */
         .tips-widget {
             background: #fff; padding: 15px 20px; border-radius: 16px;
-            border-left: 4px solid #f48fb1; margin-top: auto; /* Push to bottom */
+            border-left: 4px solid #f48fb1; margin-top: auto; 
             font-size: 13px; color: var(--text-muted); line-height: 1.6;
             box-shadow: 0 2px 10px rgba(0,0,0,0.02); margin-top: 20px;
         }
         .tips-title { font-weight: bold; color: var(--primary-color); margin-bottom: 6px; display: flex; align-items: center; gap: 5px; font-size: 14px;}
 
         @keyframes slideUp { from { opacity: 0; transform: translateY(15px); } to { opacity: 1; transform: translateY(0); } }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(-10px); } to { opacity: 1; transform: translateY(0); } }
+        
         .left-panel::-webkit-scrollbar { width: 6px; }
         .left-panel::-webkit-scrollbar-thumb { background-color: #f8bbd0; border-radius: 10px; }
     </style>
@@ -277,7 +311,11 @@
                 </div>
             </div>
 
-            <div class="history-section">
+            <!-- 新增：隐藏/展开历史记录的按钮 -->
+            <button class="toggle-history-btn" id="toggleHistoryBtn" onclick="toggleHistory()">📂 点击查看历史记录</button>
+
+            <!-- 历史记录区域（默认隐藏） -->
+            <div id="historyContent" class="history-content">
                 <div class="history-header">
                     <h2>📅 历史记录</h2>
                     <button class="clear-btn" onclick="clearAllHistory()">清空全部</button>
@@ -331,12 +369,10 @@
     </div>
 
     <script>
-        // 初始化全局数据
         let periodRecords = JSON.parse(localStorage.getItem('periodRecords')) || [];
         let currentIntimacyDates = []; 
         let currentCalDate = new Date(); 
 
-        // 生理期温馨提示语录（每次随机展示一句）
         const periodTips = [
             "尽量不要碰冰冷的饮料和生冷食物哦，多喝点温热水。🍵",
             "这几天要注意腹部保暖，可以贴个暖宝宝，避免着凉。🧣",
@@ -354,8 +390,8 @@
             
             renderCalendar();
             renderHistory();
-            fetchWeather(); // 加载天气
-            displayRandomTip(); // 加载贴士
+            fetchWeather(); 
+            displayRandomTip(); 
 
             dateInput.addEventListener('change', function(e) {
                 if(e.target.value) {
@@ -365,21 +401,39 @@
             });
         };
 
-        // --- 随机贴士 ---
+        // --- 历史记录折叠功能 ---
+        function toggleHistory() {
+            const content = document.getElementById('historyContent');
+            const btn = document.getElementById('toggleHistoryBtn');
+            if (content.classList.contains('show')) {
+                content.classList.remove('show');
+                btn.innerHTML = '📂 点击查看历史记录';
+            } else {
+                content.classList.add('show');
+                btn.innerHTML = '📂 收起历史记录';
+            }
+        }
+
+        // 强行展开历史记录（用于保存后自动展示）
+        function openHistory() {
+            const content = document.getElementById('historyContent');
+            const btn = document.getElementById('toggleHistoryBtn');
+            content.classList.add('show');
+            btn.innerHTML = '📂 收起历史记录';
+        }
+
         function displayRandomTip() {
             const tipEl = document.getElementById('dailyTip');
             const randomTip = periodTips[Math.floor(Math.random() * periodTips.length)];
             tipEl.innerText = randomTip;
         }
 
-        // --- 获取天气 (利用 Open-Meteo 免Key API) ---
         function fetchWeather() {
             if (navigator.geolocation) {
                 navigator.geolocation.getCurrentPosition(
                     (position) => {
                         const lat = position.coords.latitude;
                         const lon = position.coords.longitude;
-                        // 调用免费天气API
                         fetch(`https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&current_weather=true`)
                             .then(res => res.json())
                             .then(data => {
@@ -400,7 +454,6 @@
             let desc = '天气不错，保持好心情';
             let suggestion = '';
 
-            // WMO 天气代码解析
             if(code === 0) { icon = '☀️'; desc = '晴朗'; suggestion = '阳光很好，注意防晒哦'; }
             else if(code >= 1 && code <= 3) { icon = '⛅'; desc = '多云'; suggestion = '紫外线不强，适合散步'; }
             else if(code === 45 || code === 48) { icon = '🌫️'; desc = '雾天'; suggestion = '出门注意交通安全'; }
@@ -409,7 +462,6 @@
             else if(code >= 80 && code <= 82) { icon = '🌦️'; desc = '阵雨'; suggestion = '出门最好备一把晴雨伞'; }
             else if(code >= 95 && code <= 99) { icon = '⛈️'; desc = '雷雨'; suggestion = '尽量留在室内，安全第一'; }
 
-            // 根据温度额外增加贴士
             if(temp < 15) { suggestion += '（气温偏低，记得添衣）'; }
             else if(temp > 30) { suggestion += '（有点热，多补充水分）'; }
 
@@ -420,7 +472,7 @@
 
         function setWeatherFallback() {
             document.getElementById('weatherIcon').innerText = '🏠';
-            document.getElementById('weatherTemp').innerText = '未获取到定位';
+            document.getElementById('weatherTemp').innerText = '未能获取天气信息';
             document.getElementById('weatherDesc').innerText = '不论天气如何，都要照顾好自己哦';
         }
 
@@ -431,7 +483,6 @@
             return `${y}年${m}月${d}日`;
         };
 
-        // --- 右侧日历逻辑 ---
         function renderCalendar() {
             const year = currentCalDate.getFullYear();
             const month = currentCalDate.getMonth();
@@ -477,7 +528,6 @@
             renderCalendar();
         }
 
-        // --- 左侧预测与保存逻辑 ---
         function predictOnly() {
             const lastDate = document.getElementById('lastDate').value;
             const cycleLength = parseInt(document.getElementById('cycleLength').value);
@@ -512,7 +562,6 @@
             void resultCard.offsetWidth; 
             resultCard.classList.add('show');
             
-            // 点击预测时，也顺便换一条随机贴士看看
             displayRandomTip();
         }
 
@@ -563,6 +612,10 @@
                 const recordBtn = document.querySelector('.btn-record');
                 const originalText = recordBtn.innerText;
                 recordBtn.innerText = "✅ 保存成功";
+                
+                // 保存成功后自动展开历史记录面板，方便查看刚保存的数据
+                openHistory();
+
                 setTimeout(() => { recordBtn.innerText = originalText; }, 1500);
             } else {
                 alert("这一天已经记录过啦！如果需要修改，请先删除历史记录中的对应项。");
@@ -627,7 +680,6 @@
                 localStorage.removeItem('periodRecords');
                 document.getElementById('searchInput').value = '';
                 renderHistory();
-                document.getElementById('result').classList.remove('show');
             }
         }
     </script>
