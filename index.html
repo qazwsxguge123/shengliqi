@@ -164,96 +164,70 @@
         }
         .delete-item:hover { color: #ff5252; background: none; }
 
+        /* ================= 新增：天气组件 ================= */
+        .weather-widget {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            background: linear-gradient(135deg, #fce4ec, #fff);
+            padding: 15px 20px;
+            border-radius: 18px;
+            margin-bottom: 20px;
+            border: 1px solid #f8bbd0;
+            box-shadow: 0 4px 15px rgba(216, 27, 96, 0.05);
+        }
+        .weather-icon { font-size: 35px; }
+        .weather-info { display: flex; flex-direction: column; gap: 3px; }
+        .weather-temp { font-weight: 800; font-size: 16px; color: var(--primary-color); }
+        .weather-desc { font-size: 12px; color: var(--text-muted); }
+
         /* ================= 日历组件样式 ================= */
         .calendar-container {
             background: #fff;
             border: 1px solid #f0f0f0;
             border-radius: 20px;
             padding: 20px;
-            margin-top: 10px;
+            margin-top: 5px;
             box-shadow: 0 4px 15px rgba(0,0,0,0.02);
         }
 
-        .cal-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 20px;
-        }
-
+        .cal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
         .cal-header button {
-            background: var(--primary-light);
-            color: var(--primary-color);
-            border: none;
-            width: 32px;
-            height: 32px;
-            border-radius: 10px;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            padding: 0;
-            font-size: 16px;
+            background: var(--primary-light); color: var(--primary-color); border: none;
+            width: 32px; height: 32px; border-radius: 10px; display: flex;
+            justify-content: center; align-items: center; padding: 0; font-size: 16px;
         }
         .cal-header button:hover { background: #f8bbd0; transform: scale(1.05); }
-
         .cal-month-year { font-weight: 800; color: var(--primary-color); font-size: 16px; }
 
         .cal-weekdays {
-            display: grid;
-            grid-template-columns: repeat(7, 1fr);
-            text-align: center;
-            font-size: 12px;
-            font-weight: 600;
-            color: #bdc3c7;
-            margin-bottom: 10px;
+            display: grid; grid-template-columns: repeat(7, 1fr); text-align: center;
+            font-size: 12px; font-weight: 600; color: #bdc3c7; margin-bottom: 10px;
         }
-
-        .cal-days {
-            display: grid;
-            grid-template-columns: repeat(7, 1fr);
-            gap: 8px;
-        }
-
+        .cal-days { display: grid; grid-template-columns: repeat(7, 1fr); gap: 8px; }
         .cal-day {
-            aspect-ratio: 1;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            border-radius: 12px;
-            cursor: pointer;
-            font-size: 14px;
-            font-weight: 600;
-            color: var(--text-main);
-            position: relative;
-            background: #fafafa;
+            aspect-ratio: 1; display: flex; justify-content: center; align-items: center;
+            border-radius: 12px; cursor: pointer; font-size: 14px; font-weight: 600;
+            color: var(--text-main); position: relative; background: #fafafa;
             transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
         }
-
         .cal-day:hover { background: var(--primary-light); color: var(--primary-color); }
         .cal-day.empty { background: transparent; cursor: default; }
         
-        /* 选中爱爱状态 */
-        .cal-day.intimacy {
-            background: var(--primary-light);
-            color: var(--primary-hover);
-            border: 2px solid #f48fb1;
-        }
+        .cal-day.intimacy { background: var(--primary-light); color: var(--primary-hover); border: 2px solid #f48fb1; }
         .cal-day.intimacy::after {
-            content: "❤️";
-            font-size: 12px;
-            position: absolute;
-            bottom: -2px;
-            right: -2px;
-            background: white;
-            border-radius: 50%;
-            padding: 2px;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-            line-height: 1;
+            content: "❤️"; font-size: 12px; position: absolute; bottom: -2px; right: -2px;
+            background: white; border-radius: 50%; padding: 2px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); line-height: 1;
         }
 
-        .tip-text {
-            font-size: 12px; color: #95a5a6; text-align: center; margin-top: 15px; background: #f9f9f9; padding: 10px; border-radius: 10px;
+        /* ================= 新增：温馨贴士卡片 ================= */
+        .tips-widget {
+            background: #fff; padding: 15px 20px; border-radius: 16px;
+            border-left: 4px solid #f48fb1; margin-top: auto; /* Push to bottom */
+            font-size: 13px; color: var(--text-muted); line-height: 1.6;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.02); margin-top: 20px;
         }
+        .tips-title { font-weight: bold; color: var(--primary-color); margin-bottom: 6px; display: flex; align-items: center; gap: 5px; font-size: 14px;}
 
         @keyframes slideUp { from { opacity: 0; transform: translateY(15px); } to { opacity: 1; transform: translateY(0); } }
         .left-panel::-webkit-scrollbar { width: 6px; }
@@ -317,11 +291,21 @@
 
         <!-- 右侧：详细事件与日历打卡 -->
         <div class="panel right-panel">
+            
+            <!-- 天气模块 -->
+            <div class="weather-widget" id="weatherWidget">
+                <div class="weather-icon" id="weatherIcon">🌍</div>
+                <div class="weather-info">
+                    <div class="weather-temp" id="weatherTemp">正在感受当天的风...</div>
+                    <div class="weather-desc" id="weatherDesc">允许位置权限以获取实时天气哦</div>
+                </div>
+            </div>
+
             <h2>💖 详细打卡</h2>
             
             <div class="form-group">
                 <label for="actualDays">这次实际来了几天？(选填)</label>
-                <input type="number" id="actualDays" placeholder="例如：6（留空则默认等同于预计天数）" min="1" max="15">
+                <input type="number" id="actualDays" placeholder="例如：6（留空则默认等同预计天数）" min="1" max="15">
             </div>
 
             <label>点击日历记录爱爱日期 👩‍❤️‍👨</label>
@@ -334,32 +318,45 @@
                 <div class="cal-weekdays">
                     <div>日</div><div>一</div><div>二</div><div>三</div><div>四</div><div>五</div><div>六</div>
                 </div>
-                <div class="cal-days" id="calDays">
-                    <!-- 日历格子由JS动态生成 -->
-                </div>
+                <div class="cal-days" id="calDays"></div>
             </div>
 
-            <div class="tip-text">
-                💡 提示：在上方日历中点选日期，会自动标记小爱心。<br>填好后点击左侧的<b>「📝 保存记录」</b>即可合并保存。
+            <!-- 注意事项贴士模块 -->
+            <div class="tips-widget">
+                <div class="tips-title">💡 仙女贴士</div>
+                <div id="dailyTip">正在为你翻阅健康手册...</div>
             </div>
+
         </div>
     </div>
 
     <script>
         // 初始化全局数据
         let periodRecords = JSON.parse(localStorage.getItem('periodRecords')) || [];
-        let currentIntimacyDates = []; // 内部格式：YYYY-MM-DD
-        let currentCalDate = new Date(); // 控制日历当前显示的月份
+        let currentIntimacyDates = []; 
+        let currentCalDate = new Date(); 
+
+        // 生理期温馨提示语录（每次随机展示一句）
+        const periodTips = [
+            "尽量不要碰冰冷的饮料和生冷食物哦，多喝点温热水。🍵",
+            "这几天要注意腹部保暖，可以贴个暖宝宝，避免着凉。🧣",
+            "如果肚子有点痛，可以尝试泡一杯红糖姜茶，暖暖身子。🤎",
+            "避免剧烈运动和重体力劳动，可以选择散步或轻柔的瑜伽。🧘‍♀️",
+            "保持清淡饮食，少吃辛辣刺激的食物，多吃富含铁和维生素的食物。🍎",
+            "如果感觉情绪低落是正常的激素变化，吃块巧克力，听听轻音乐放松一下吧。🍫",
+            "记得勤换卫生巾（建议每2-3小时一次），保持清爽卫生哦。✨",
+            "睡前可以泡泡脚，有助于促进血液循环，提高睡眠质量。🛁"
+        ];
 
         window.onload = function() {
-            // 左侧日期默认今天
             const dateInput = document.getElementById('lastDate');
             dateInput.valueAsDate = new Date();
             
             renderCalendar();
             renderHistory();
+            fetchWeather(); // 加载天气
+            displayRandomTip(); // 加载贴士
 
-            // 当左侧的"第一天"改变时，右侧日历自动跳到那个月
             dateInput.addEventListener('change', function(e) {
                 if(e.target.value) {
                     currentCalDate = new Date(e.target.value);
@@ -367,6 +364,65 @@
                 }
             });
         };
+
+        // --- 随机贴士 ---
+        function displayRandomTip() {
+            const tipEl = document.getElementById('dailyTip');
+            const randomTip = periodTips[Math.floor(Math.random() * periodTips.length)];
+            tipEl.innerText = randomTip;
+        }
+
+        // --- 获取天气 (利用 Open-Meteo 免Key API) ---
+        function fetchWeather() {
+            if (navigator.geolocation) {
+                navigator.geolocation.getCurrentPosition(
+                    (position) => {
+                        const lat = position.coords.latitude;
+                        const lon = position.coords.longitude;
+                        // 调用免费天气API
+                        fetch(`https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&current_weather=true`)
+                            .then(res => res.json())
+                            .then(data => {
+                                const weather = data.current_weather;
+                                updateWeatherUI(weather.temperature, weather.weathercode);
+                            })
+                            .catch(err => setWeatherFallback());
+                    },
+                    (error) => setWeatherFallback()
+                );
+            } else {
+                setWeatherFallback();
+            }
+        }
+
+        function updateWeatherUI(temp, code) {
+            let icon = '🌤️';
+            let desc = '天气不错，保持好心情';
+            let suggestion = '';
+
+            // WMO 天气代码解析
+            if(code === 0) { icon = '☀️'; desc = '晴朗'; suggestion = '阳光很好，注意防晒哦'; }
+            else if(code >= 1 && code <= 3) { icon = '⛅'; desc = '多云'; suggestion = '紫外线不强，适合散步'; }
+            else if(code === 45 || code === 48) { icon = '🌫️'; desc = '雾天'; suggestion = '出门注意交通安全'; }
+            else if(code >= 51 && code <= 67) { icon = '🌧️'; desc = '雨天'; suggestion = '记得带把伞，当心淋雨受凉'; }
+            else if(code >= 71 && code <= 77) { icon = '❄️'; desc = '雪天'; suggestion = '多穿点，一定要注意保暖哦'; }
+            else if(code >= 80 && code <= 82) { icon = '🌦️'; desc = '阵雨'; suggestion = '出门最好备一把晴雨伞'; }
+            else if(code >= 95 && code <= 99) { icon = '⛈️'; desc = '雷雨'; suggestion = '尽量留在室内，安全第一'; }
+
+            // 根据温度额外增加贴士
+            if(temp < 15) { suggestion += '（气温偏低，记得添衣）'; }
+            else if(temp > 30) { suggestion += '（有点热，多补充水分）'; }
+
+            document.getElementById('weatherIcon').innerText = icon;
+            document.getElementById('weatherTemp').innerText = `今天气温 ${temp}°C | ${desc}`;
+            document.getElementById('weatherDesc').innerText = suggestion;
+        }
+
+        function setWeatherFallback() {
+            document.getElementById('weatherIcon').innerText = '🏠';
+            document.getElementById('weatherTemp').innerText = '未获取到定位';
+            document.getElementById('weatherDesc').innerText = '不论天气如何，都要照顾好自己哦';
+        }
 
         const formatDate = (date) => {
             const y = date.getFullYear();
@@ -382,22 +438,19 @@
             
             document.getElementById('calMonthYear').innerText = `${year}年 ${month + 1}月`;
             
-            const firstDayIndex = new Date(year, month, 1).getDay(); // 本月第一天是星期几
-            const daysInMonth = new Date(year, month + 1, 0).getDate(); // 本月有几天
+            const firstDayIndex = new Date(year, month, 1).getDay();
+            const daysInMonth = new Date(year, month + 1, 0).getDate(); 
             
             const calDaysEl = document.getElementById('calDays');
             calDaysEl.innerHTML = '';
             
-            // 填充前面的空白格子
             for(let i = 0; i < firstDayIndex; i++) {
                 const emptyDiv = document.createElement('div');
                 emptyDiv.className = 'cal-day empty';
                 calDaysEl.appendChild(emptyDiv);
             }
             
-            // 填充天数
             for(let i = 1; i <= daysInMonth; i++) {
-                // 格式化为 YYYY-MM-DD
                 const dateStr = `${year}-${String(month + 1).padStart(2, '0')}-${String(i).padStart(2, '0')}`;
                 const isSelected = currentIntimacyDates.includes(dateStr);
                 
@@ -412,10 +465,8 @@
 
         function toggleIntimacy(dateStr) {
             if(currentIntimacyDates.includes(dateStr)) {
-                // 取消选中
                 currentIntimacyDates = currentIntimacyDates.filter(d => d !== dateStr);
             } else {
-                // 增加选中
                 currentIntimacyDates.push(dateStr);
             }
             renderCalendar();
@@ -460,6 +511,9 @@
             resultCard.classList.remove('show');
             void resultCard.offsetWidth; 
             resultCard.classList.add('show');
+            
+            // 点击预测时，也顺便换一条随机贴士看看
+            displayRandomTip();
         }
 
         function saveOnly() {
@@ -476,12 +530,10 @@
 
             const lastDateObj = new Date(lastDate);
             
-            // 将 YYYY-MM-DD 转换为可读的 MM月DD日 格式存入历史记录
             const formattedIntimacyDates = currentIntimacyDates.map(dateStr => {
                 const parts = dateStr.split('-');
                 return `${parts[1]}月${parts[2]}日`;
             });
-            // 排序保证美观
             formattedIntimacyDates.sort();
 
             const newRecord = {
@@ -504,7 +556,6 @@
                 document.getElementById('searchInput').value = '';
                 renderHistory();
                 
-                // 保存成功后重置右侧
                 document.getElementById('actualDays').value = '';
                 currentIntimacyDates = [];
                 renderCalendar();
