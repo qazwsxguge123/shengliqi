@@ -9,228 +9,575 @@
             --primary-color: #d81b60;
             --primary-light: #fce4ec;
             --primary-hover: #c2185b;
-            --text-main: #333;
-            --text-muted: #666;
-            --bg-color: #fff0f5;
+            --text-main: #2c3e50;
+            --text-muted: #7f8c8d;
+            --bg-gradient: linear-gradient(135deg, #fff0f5 0%, #fde4ec 100%);
+            --card-bg: rgba(255, 255, 255, 0.95);
+            --shadow-soft: 0 15px 35px rgba(216, 27, 96, 0.08);
         }
 
         body {
-            font-family: 'Segoe UI', 'Microsoft YaHei', Tahoma, sans-serif;
-            background-color: var(--bg-color);
+            font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, Roboto, sans-serif;
+            background: var(--bg-gradient);
             color: var(--text-main);
             display: flex;
             justify-content: center;
-            align-items: center;
+            align-items: flex-start;
             min-height: 100vh;
             margin: 0;
-            padding: 20px;
+            padding: 40px 20px;
             box-sizing: border-box;
         }
 
-        .container {
-            background: white;
-            padding: 35px 30px;
-            border-radius: 24px;
-            box-shadow: 0 10px 30px rgba(216, 27, 96, 0.08);
+        /* 左右双栏外层容器 */
+        .layout-wrapper {
+            display: flex;
+            gap: 30px;
             width: 100%;
-            max-width: 400px;
+            max-width: 950px;
         }
 
-        h1 {
+        /* 通用卡片样式 */
+        .panel {
+            background: var(--card-bg);
+            padding: 35px 30px;
+            border-radius: 28px;
+            box-shadow: var(--shadow-soft);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.6);
+            flex: 1;
+        }
+
+        .left-panel {
+            max-height: 85vh;
+            overflow-y: auto;
+        }
+
+        .right-panel {
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* 手机端适配：上下堆叠 */
+        @media (max-width: 800px) {
+            .layout-wrapper { flex-direction: column; }
+            .left-panel { max-height: none; }
+        }
+
+        h1, h2 {
             color: var(--primary-color);
-            text-align: center;
-            font-size: 22px;
             margin-top: 0;
-            margin-bottom: 25px;
             font-weight: 600;
         }
 
-        .form-group {
-            margin-bottom: 18px;
-        }
+        h1 { font-size: 22px; text-align: center; margin-bottom: 28px; letter-spacing: 1px;}
+        h2 { font-size: 18px; margin-bottom: 20px; display: flex; align-items: center; gap: 8px;}
+
+        .form-group { margin-bottom: 20px; }
 
         label {
             display: block;
             margin-bottom: 8px;
             color: var(--text-muted);
-            font-size: 14px;
-            font-weight: 500;
+            font-size: 13px;
+            font-weight: 600;
+            letter-spacing: 0.5px;
         }
 
-        input {
+        input[type="date"], input[type="number"], input[type="text"] {
             width: 100%;
-            padding: 12px 15px;
-            border: 2px solid var(--primary-light);
-            border-radius: 12px;
+            padding: 14px 16px;
+            border: 2px solid #f0f0f0;
+            border-radius: 14px;
             box-sizing: border-box;
             font-size: 15px;
             color: var(--text-main);
             outline: none;
-            transition: all 0.3s ease;
-            font-family: inherit;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            background: #fafafa;
         }
 
         input:focus {
-            border-color: var(--primary-color);
-            box-shadow: 0 0 0 3px rgba(216, 27, 96, 0.1);
+            border-color: #f48fb1;
+            background: #fff;
+            box-shadow: 0 0 0 4px rgba(244, 143, 177, 0.15);
         }
+
+        /* 按钮组样式 */
+        .btn-group { display: flex; gap: 15px; margin-top: 25px; }
 
         button {
-            width: 100%;
-            padding: 14px;
-            background-color: var(--primary-color);
-            color: white;
-            border: none;
-            border-radius: 12px;
-            font-size: 16px;
+            padding: 15px 10px;
+            border-radius: 14px;
+            font-size: 15px;
             cursor: pointer;
-            transition: background-color 0.3s;
-            font-weight: 600;
-            margin-top: 15px;
-            letter-spacing: 1px;
-        }
-
-        button:hover {
-            background-color: var(--primary-hover);
-        }
-
-        .result-card {
-            margin-top: 25px;
-            padding: 20px;
-            background-color: var(--primary-light);
-            border-radius: 16px;
-            display: none;
-            border-left: 4px solid var(--primary-color);
-        }
-
-        .result-card.show {
-            display: block;
-            animation: slideUp 0.4s ease-out forwards;
-        }
-
-        .result-item {
-            margin-bottom: 12px;
-        }
-
-        .result-item:last-child {
-            margin-bottom: 0;
-        }
-
-        .result-label {
-            font-size: 13px;
-            color: var(--text-muted);
-            margin-bottom: 4px;
-        }
-
-        .result-value {
-            font-size: 18px;
-            color: var(--primary-color);
+            transition: all 0.3s;
             font-weight: bold;
+            letter-spacing: 0.5px;
+            border: 2px solid var(--primary-color);
         }
 
-        @keyframes slideUp {
-            from {
-                opacity: 0;
-                transform: translateY(15px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
+        .btn-predict { background-color: var(--primary-color); color: white; flex: 1; box-shadow: 0 4px 15px rgba(216, 27, 96, 0.2);}
+        .btn-predict:hover { background-color: var(--primary-hover); border-color: var(--primary-hover); transform: translateY(-2px);}
+        .btn-record { background-color: transparent; color: var(--primary-color); flex: 1; }
+        .btn-record:hover { background-color: var(--primary-light); transform: translateY(-2px);}
+        
+        /* 预测结果卡片 */
+        .result-card {
+            margin-top: 25px; padding: 22px; background: linear-gradient(to right bottom, #fff, var(--primary-light));
+            border-radius: 18px; display: none; border-left: 5px solid var(--primary-color);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.03);
         }
+        .result-card.show { display: block; animation: slideUp 0.4s ease-out forwards; }
+        .result-item { margin-bottom: 15px; }
+        .result-item:last-child { margin-bottom: 0; }
+        .result-label { font-size: 13px; color: var(--text-muted); margin-bottom: 5px; }
+        .result-value { font-size: 18px; color: var(--primary-color); font-weight: 800; }
+
+        /* 历史记录 */
+        .history-section { margin-top: 35px; border-top: 1px dashed #e0e0e0; padding-top: 25px; }
+        .history-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; }
+        .history-header h2 { font-size: 16px; margin: 0;}
+        .clear-btn { padding: 0; border: none; background: none; color: #aab7c4; font-size: 13px; font-weight: normal; }
+        .clear-btn:hover { color: var(--primary-color); background: none; text-decoration: underline;}
+        
+        .history-list { list-style: none; padding: 0; margin: 0; }
+        .history-card {
+            background: #fff; border: 1px solid #f0f0f0; border-radius: 16px;
+            padding: 18px; margin-bottom: 15px; font-size: 14px; position: relative;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.02); transition: transform 0.2s;
+        }
+        .history-card:hover { transform: translateY(-2px); border-color: #fce4ec; box-shadow: 0 5px 15px rgba(216, 27, 96, 0.05);}
+        .history-card .date { font-weight: 800; color: var(--primary-color); margin-bottom: 8px; font-size: 16px;}
+        .history-card .details { color: var(--text-muted); font-size: 13px; margin-bottom: 10px;}
+        
+        .intimacy-info {
+            background-color: var(--primary-light); color: var(--primary-hover);
+            padding: 10px 12px; border-radius: 10px; font-size: 12px;
+            display: flex; gap: 8px; flex-wrap: wrap; align-items: center; font-weight: 600;
+        }
+        .intimacy-info span { background: white; padding: 3px 8px; border-radius: 6px; box-shadow: 0 1px 3px rgba(0,0,0,0.05);}
+
+        .delete-item {
+            position: absolute; right: 18px; top: 18px; color: #e0e0e0; cursor: pointer;
+            font-size: 20px; border: none; background: none; padding: 0; line-height: 1;
+        }
+        .delete-item:hover { color: #ff5252; background: none; }
+
+        /* ================= 日历组件样式 ================= */
+        .calendar-container {
+            background: #fff;
+            border: 1px solid #f0f0f0;
+            border-radius: 20px;
+            padding: 20px;
+            margin-top: 10px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.02);
+        }
+
+        .cal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .cal-header button {
+            background: var(--primary-light);
+            color: var(--primary-color);
+            border: none;
+            width: 32px;
+            height: 32px;
+            border-radius: 10px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 0;
+            font-size: 16px;
+        }
+        .cal-header button:hover { background: #f8bbd0; transform: scale(1.05); }
+
+        .cal-month-year { font-weight: 800; color: var(--primary-color); font-size: 16px; }
+
+        .cal-weekdays {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            text-align: center;
+            font-size: 12px;
+            font-weight: 600;
+            color: #bdc3c7;
+            margin-bottom: 10px;
+        }
+
+        .cal-days {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            gap: 8px;
+        }
+
+        .cal-day {
+            aspect-ratio: 1;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            border-radius: 12px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--text-main);
+            position: relative;
+            background: #fafafa;
+            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .cal-day:hover { background: var(--primary-light); color: var(--primary-color); }
+        .cal-day.empty { background: transparent; cursor: default; }
+        
+        /* 选中爱爱状态 */
+        .cal-day.intimacy {
+            background: var(--primary-light);
+            color: var(--primary-hover);
+            border: 2px solid #f48fb1;
+        }
+        .cal-day.intimacy::after {
+            content: "❤️";
+            font-size: 12px;
+            position: absolute;
+            bottom: -2px;
+            right: -2px;
+            background: white;
+            border-radius: 50%;
+            padding: 2px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            line-height: 1;
+        }
+
+        .tip-text {
+            font-size: 12px; color: #95a5a6; text-align: center; margin-top: 15px; background: #f9f9f9; padding: 10px; border-radius: 10px;
+        }
+
+        @keyframes slideUp { from { opacity: 0; transform: translateY(15px); } to { opacity: 1; transform: translateY(0); } }
+        .left-panel::-webkit-scrollbar { width: 6px; }
+        .left-panel::-webkit-scrollbar-thumb { background-color: #f8bbd0; border-radius: 10px; }
     </style>
 </head>
 <body>
 
-    <div class="container">
-        <h1>🌸 我的生理期记录器</h1>
-        
-        <div class="form-group">
-            <label for="lastDate">最近一次来的第一天是？</label>
-            <input type="date" id="lastDate" required>
-        </div>
-
-        <div class="form-group">
-            <label for="cycleLength">你的平均周期是几天？ (通常为28天)</label>
-            <input type="number" id="cycleLength" value="28" min="20" max="45" required>
-        </div>
-
-        <div class="form-group">
-            <label for="periodLength">一般持续几天？ (通常为5天)</label>
-            <input type="number" id="periodLength" value="5" min="2" max="10" required>
-        </div>
-
-        <button onclick="calculateNextPeriod()">帮我预测下一次</button>
-
-        <div id="result" class="result-card">
-            <div class="result-item">
-                <div class="result-label">下一次预计开始时间</div>
-                <div class="result-value" id="nextStartDate">--</div>
+    <div class="layout-wrapper">
+        <!-- 左侧：生理期与预测 -->
+        <div class="panel left-panel">
+            <h1>🌸 周期与预测记录</h1>
+            
+            <div class="form-group">
+                <label for="lastDate">记录日期的第一天是？</label>
+                <input type="date" id="lastDate" required>
             </div>
-            <div class="result-item">
-                <div class="result-label">下一次预计结束时间</div>
-                <div class="result-value" id="nextEndDate" style="font-size: 16px; color: #c2185b;">--</div>
+
+            <div class="form-group" style="display: flex; gap: 15px;">
+                <div style="flex: 1;">
+                    <label for="cycleLength">平均周期(天)</label>
+                    <input type="number" id="cycleLength" value="28" min="20" max="45" required>
+                </div>
+                <div style="flex: 1;">
+                    <label for="periodLength">预计持续(天)</label>
+                    <input type="number" id="periodLength" value="5" min="2" max="10" required>
+                </div>
             </div>
-            <div class="result-item" style="margin-top: 15px; border-top: 1px dashed #f8bbd0; padding-top: 12px;">
-                <div class="result-label">大概的易孕期（仅供参考）</div>
-                <div class="result-value" id="fertileWindow" style="font-size: 15px; color: #880e4f;">--</div>
+
+            <div class="btn-group">
+                <button class="btn-predict" onclick="predictOnly()">🔮 帮我预测</button>
+                <button class="btn-record" onclick="saveOnly()">📝 保存记录</button>
+            </div>
+
+            <div id="result" class="result-card">
+                <div class="result-item">
+                    <div class="result-label">下一次预计开始</div>
+                    <div class="result-value" id="nextStartDate">--</div>
+                </div>
+                <div class="result-item">
+                    <div class="result-label">下一次预计结束</div>
+                    <div class="result-value" id="nextEndDate" style="font-size: 16px; color: #c2185b;">--</div>
+                </div>
+                <div class="result-item" style="margin-top: 15px; border-top: 1px dashed #f8bbd0; padding-top: 12px;">
+                    <div class="result-label">大概易孕期（仅供参考）</div>
+                    <div class="result-value" id="fertileWindow" style="font-size: 15px; color: #880e4f;">--</div>
+                </div>
+            </div>
+
+            <div class="history-section">
+                <div class="history-header">
+                    <h2>📅 历史记录</h2>
+                    <button class="clear-btn" onclick="clearAllHistory()">清空全部</button>
+                </div>
+                <div class="form-group" style="margin-bottom: 15px;">
+                    <input type="text" id="searchInput" placeholder="🔍 搜索年份/月份 (如: 2024)" oninput="searchHistory()" style="padding: 10px 15px; font-size: 13px;">
+                </div>
+                <ul id="historyList" class="history-list"></ul>
+            </div>
+        </div>
+
+        <!-- 右侧：详细事件与日历打卡 -->
+        <div class="panel right-panel">
+            <h2>💖 详细打卡</h2>
+            
+            <div class="form-group">
+                <label for="actualDays">这次实际来了几天？(选填)</label>
+                <input type="number" id="actualDays" placeholder="例如：6（留空则默认等同于预计天数）" min="1" max="15">
+            </div>
+
+            <label>点击日历记录爱爱日期 👩‍❤️‍👨</label>
+            <div class="calendar-container">
+                <div class="cal-header">
+                    <button onclick="changeMonth(-1)">❮</button>
+                    <div class="cal-month-year" id="calMonthYear">2023年 10月</div>
+                    <button onclick="changeMonth(1)">❯</button>
+                </div>
+                <div class="cal-weekdays">
+                    <div>日</div><div>一</div><div>二</div><div>三</div><div>四</div><div>五</div><div>六</div>
+                </div>
+                <div class="cal-days" id="calDays">
+                    <!-- 日历格子由JS动态生成 -->
+                </div>
+            </div>
+
+            <div class="tip-text">
+                💡 提示：在上方日历中点选日期，会自动标记小爱心。<br>填好后点击左侧的<b>「📝 保存记录」</b>即可合并保存。
             </div>
         </div>
     </div>
 
     <script>
-        // 自动将日期输入框默认设置为今天
-        document.getElementById('lastDate').valueAsDate = new Date();
+        // 初始化全局数据
+        let periodRecords = JSON.parse(localStorage.getItem('periodRecords')) || [];
+        let currentIntimacyDates = []; // 内部格式：YYYY-MM-DD
+        let currentCalDate = new Date(); // 控制日历当前显示的月份
 
-        function calculateNextPeriod() {
+        window.onload = function() {
+            // 左侧日期默认今天
+            const dateInput = document.getElementById('lastDate');
+            dateInput.valueAsDate = new Date();
+            
+            renderCalendar();
+            renderHistory();
+
+            // 当左侧的"第一天"改变时，右侧日历自动跳到那个月
+            dateInput.addEventListener('change', function(e) {
+                if(e.target.value) {
+                    currentCalDate = new Date(e.target.value);
+                    renderCalendar();
+                }
+            });
+        };
+
+        const formatDate = (date) => {
+            const y = date.getFullYear();
+            const m = String(date.getMonth() + 1).padStart(2, '0');
+            const d = String(date.getDate()).padStart(2, '0');
+            return `${y}年${m}月${d}日`;
+        };
+
+        // --- 右侧日历逻辑 ---
+        function renderCalendar() {
+            const year = currentCalDate.getFullYear();
+            const month = currentCalDate.getMonth();
+            
+            document.getElementById('calMonthYear').innerText = `${year}年 ${month + 1}月`;
+            
+            const firstDayIndex = new Date(year, month, 1).getDay(); // 本月第一天是星期几
+            const daysInMonth = new Date(year, month + 1, 0).getDate(); // 本月有几天
+            
+            const calDaysEl = document.getElementById('calDays');
+            calDaysEl.innerHTML = '';
+            
+            // 填充前面的空白格子
+            for(let i = 0; i < firstDayIndex; i++) {
+                const emptyDiv = document.createElement('div');
+                emptyDiv.className = 'cal-day empty';
+                calDaysEl.appendChild(emptyDiv);
+            }
+            
+            // 填充天数
+            for(let i = 1; i <= daysInMonth; i++) {
+                // 格式化为 YYYY-MM-DD
+                const dateStr = `${year}-${String(month + 1).padStart(2, '0')}-${String(i).padStart(2, '0')}`;
+                const isSelected = currentIntimacyDates.includes(dateStr);
+                
+                const dayDiv = document.createElement('div');
+                dayDiv.className = `cal-day ${isSelected ? 'intimacy' : ''}`;
+                dayDiv.innerText = i;
+                
+                dayDiv.onclick = () => toggleIntimacy(dateStr);
+                calDaysEl.appendChild(dayDiv);
+            }
+        }
+
+        function toggleIntimacy(dateStr) {
+            if(currentIntimacyDates.includes(dateStr)) {
+                // 取消选中
+                currentIntimacyDates = currentIntimacyDates.filter(d => d !== dateStr);
+            } else {
+                // 增加选中
+                currentIntimacyDates.push(dateStr);
+            }
+            renderCalendar();
+        }
+
+        function changeMonth(offset) {
+            currentCalDate.setMonth(currentCalDate.getMonth() + offset);
+            renderCalendar();
+        }
+
+        // --- 左侧预测与保存逻辑 ---
+        function predictOnly() {
             const lastDate = document.getElementById('lastDate').value;
             const cycleLength = parseInt(document.getElementById('cycleLength').value);
             const periodLength = parseInt(document.getElementById('periodLength').value);
 
             if(!lastDate || !cycleLength || !periodLength) {
-                alert("请填完所有的信息哦，这样我才能帮你算得准呀～");
+                alert("请填完左侧的必填信息哦！");
                 return;
             }
 
             const lastDateObj = new Date(lastDate);
-            
-            // 计算下一次开始的时间
             const nextStartObj = new Date(lastDateObj);
             nextStartObj.setDate(nextStartObj.getDate() + cycleLength);
             
-            // 计算下一次结束的时间
             const nextEndObj = new Date(nextStartObj);
             nextEndObj.setDate(nextEndObj.getDate() + periodLength - 1); 
             
-            // 格式化日期的方法
-            const formatDate = (date) => {
-                const y = date.getFullYear();
-                const m = String(date.getMonth() + 1).padStart(2, '0');
-                const d = String(date.getDate()).padStart(2, '0');
-                return `${y}年${m}月${d}日`;
-            };
-
-            // 估算易孕期 (基于排卵期大约在下次月经前14天，易孕期为排卵前4天到排卵后1天)
             const ovulationObj = new Date(nextStartObj);
             ovulationObj.setDate(ovulationObj.getDate() - 14);
             
             const fertileStart = new Date(ovulationObj);
             fertileStart.setDate(fertileStart.getDate() - 4);
-            
             const fertileEnd = new Date(ovulationObj);
             fertileEnd.setDate(fertileEnd.getDate() + 1);
 
-            // 更新页面数据
             document.getElementById('nextStartDate').innerText = formatDate(nextStartObj);
             document.getElementById('nextEndDate').innerText = formatDate(nextEndObj);
             document.getElementById('fertileWindow').innerText = `${formatDate(fertileStart)} 至 ${formatDate(fertileEnd)}`;
 
-            // 显示结果卡片
             const resultCard = document.getElementById('result');
             resultCard.classList.remove('show');
-            // 触发重绘以重新播放动画
             void resultCard.offsetWidth; 
             resultCard.classList.add('show');
+        }
+
+        function saveOnly() {
+            const lastDate = document.getElementById('lastDate').value;
+            const cycleLength = parseInt(document.getElementById('cycleLength').value);
+            const periodLength = parseInt(document.getElementById('periodLength').value);
+            const actualDaysInput = document.getElementById('actualDays').value;
+            const actualDays = actualDaysInput ? parseInt(actualDaysInput) : periodLength;
+
+            if(!lastDate || !cycleLength || !periodLength) {
+                alert("请填完左侧的基础信息才能保存记录哦！");
+                return;
+            }
+
+            const lastDateObj = new Date(lastDate);
+            
+            // 将 YYYY-MM-DD 转换为可读的 MM月DD日 格式存入历史记录
+            const formattedIntimacyDates = currentIntimacyDates.map(dateStr => {
+                const parts = dateStr.split('-');
+                return `${parts[1]}月${parts[2]}日`;
+            });
+            // 排序保证美观
+            formattedIntimacyDates.sort();
+
+            const newRecord = {
+                id: Date.now(),
+                startDate: formatDate(lastDateObj),
+                cycle: cycleLength,
+                period: periodLength,
+                actualDays: actualDays,
+                intimacyDates: formattedIntimacyDates,
+                timestamp: lastDateObj.getTime()
+            };
+
+            const isDuplicate = periodRecords.some(record => record.startDate === newRecord.startDate);
+            if (!isDuplicate) {
+                periodRecords.push(newRecord);
+                periodRecords.sort((a, b) => b.timestamp - a.timestamp);
+                
+                localStorage.setItem('periodRecords', JSON.stringify(periodRecords));
+                
+                document.getElementById('searchInput').value = '';
+                renderHistory();
+                
+                // 保存成功后重置右侧
+                document.getElementById('actualDays').value = '';
+                currentIntimacyDates = [];
+                renderCalendar();
+
+                const recordBtn = document.querySelector('.btn-record');
+                const originalText = recordBtn.innerText;
+                recordBtn.innerText = "✅ 保存成功";
+                setTimeout(() => { recordBtn.innerText = originalText; }, 1500);
+            } else {
+                alert("这一天已经记录过啦！如果需要修改，请先删除历史记录中的对应项。");
+            }
+        }
+
+        function renderHistory(recordsToRender = periodRecords) {
+            const listEl = document.getElementById('historyList');
+            listEl.innerHTML = ''; 
+
+            if (recordsToRender.length === 0) {
+                listEl.innerHTML = '<li style="text-align:center; color:#999; font-size:13px; margin-top:20px;">暂无记录~</li>';
+                return;
+            }
+
+            recordsToRender.forEach(record => {
+                const li = document.createElement('li');
+                li.className = 'history-card';
+                
+                let intimacyHtml = '';
+                if(record.intimacyDates && record.intimacyDates.length > 0) {
+                    const spanTags = record.intimacyDates.map(d => `<span>${d}</span>`).join('');
+                    intimacyHtml = `<div class="intimacy-info">👩‍❤️‍👨 爱爱记录：${spanTags}</div>`;
+                }
+
+                const actual = record.actualDays ? record.actualDays : record.period;
+
+                li.innerHTML = `
+                    <div class="date">${record.startDate}</div>
+                    <div class="details">周期：${record.cycle}天 | 预计：${record.period}天 | <b style="color:var(--text-main)">实际：${actual}天</b></div>
+                    ${intimacyHtml}
+                    <button class="delete-item" onclick="deleteRecord(${record.id})" title="删除此条">×</button>
+                `;
+                listEl.appendChild(li);
+            });
+        }
+
+        function searchHistory() {
+            const query = document.getElementById('searchInput').value.trim();
+            if (!query) {
+                renderHistory(periodRecords);
+                return;
+            }
+            const filteredRecords = periodRecords.filter(record => 
+                record.startDate.includes(query)
+            );
+            renderHistory(filteredRecords);
+        }
+
+        function deleteRecord(id) {
+            if(confirm('确定要删除这条记录吗？')) {
+                periodRecords = periodRecords.filter(record => record.id !== id);
+                localStorage.setItem('periodRecords', JSON.stringify(periodRecords));
+                searchHistory(); 
+            }
+        }
+
+        function clearAllHistory() {
+            if(periodRecords.length === 0) return;
+            if(confirm('确定要清空所有的历史记录吗？不可恢复哦。')) {
+                periodRecords = [];
+                localStorage.removeItem('periodRecords');
+                document.getElementById('searchInput').value = '';
+                renderHistory();
+                document.getElementById('result').classList.remove('show');
+            }
         }
     </script>
 </body>
