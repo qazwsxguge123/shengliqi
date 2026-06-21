@@ -29,131 +29,63 @@
             box-sizing: border-box;
         }
 
+        /* 隐私密码锁层 */
+        .lock-screen {
+            position: fixed; inset: 0; background: rgba(255, 255, 255, 0.85);
+            backdrop-filter: blur(15px); z-index: 10000;
+            display: flex; justify-content: center; align-items: center;
+        }
+        .lock-box {
+            background: white; padding: 40px 30px; border-radius: 28px;
+            box-shadow: 0 20px 40px rgba(216, 27, 96, 0.15); border: 1px solid #fce4ec;
+            text-align: center; max-width: 320px; width: 100%;
+            animation: slideUp 0.4s ease-out;
+        }
+        .lock-box h2 { margin: 10px 0; color: var(--primary-color); }
+        .lock-box p { font-size: 13px; color: var(--text-muted); margin-bottom: 25px; line-height: 1.5; }
+        #pinInput {
+            width: 100%; font-size: 24px; text-align: center; letter-spacing: 12px;
+            padding: 15px; border-radius: 14px; border: 2px solid var(--primary-light);
+            outline: none; transition: all 0.3s;
+        }
+        #pinInput:focus { border-color: var(--primary-color); box-shadow: 0 0 0 4px rgba(244, 143, 177, 0.15); }
+        .lock-btns { display: flex; gap: 10px; margin-top: 20px; width: 100%; }
+
         /* 左右双栏外层容器 */
-        .layout-wrapper {
-            display: flex;
-            gap: 30px;
-            width: 100%;
-            max-width: 950px;
-        }
+        .layout-wrapper { display: flex; gap: 30px; width: 100%; max-width: 950px; }
+        .panel { background: var(--card-bg); padding: 35px 30px; border-radius: 28px; box-shadow: var(--shadow-soft); backdrop-filter: blur(10px); border: 1px solid rgba(255, 255, 255, 0.6); flex: 1; }
+        .left-panel { max-height: 85vh; overflow-y: auto; }
+        .right-panel { display: flex; flex-direction: column; }
 
-        /* 通用卡片样式 */
-        .panel {
-            background: var(--card-bg);
-            padding: 35px 30px;
-            border-radius: 28px;
-            box-shadow: var(--shadow-soft);
-            backdrop-filter: blur(10px);
-            border: 1px solid rgba(255, 255, 255, 0.6);
-            flex: 1;
-        }
-
-        .left-panel {
-            max-height: 85vh;
-            overflow-y: auto;
-        }
-
-        .right-panel {
-            display: flex;
-            flex-direction: column;
-        }
-
-        /* 手机端适配：上下堆叠 */
         @media (max-width: 800px) {
             .layout-wrapper { flex-direction: column; }
             .left-panel { max-height: none; }
         }
 
-        h1, h2 {
-            color: var(--primary-color);
-            margin-top: 0;
-            font-weight: 600;
-        }
-
+        h1, h2 { color: var(--primary-color); margin-top: 0; font-weight: 600; }
         h1 { font-size: 22px; text-align: center; margin-bottom: 28px; letter-spacing: 1px;}
         h2 { font-size: 18px; margin-bottom: 20px; display: flex; align-items: center; gap: 8px;}
-
         .form-group { margin-bottom: 20px; }
+        label { display: block; margin-bottom: 8px; color: var(--text-muted); font-size: 13px; font-weight: 600; letter-spacing: 0.5px; }
+        input[type="date"], input[type="number"], input[type="text"] { width: 100%; padding: 14px 16px; border: 2px solid #f0f0f0; border-radius: 14px; box-sizing: border-box; font-size: 15px; color: var(--text-main); outline: none; transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); background: #fafafa; }
+        input:focus { border-color: #f48fb1; background: #fff; box-shadow: 0 0 0 4px rgba(244, 143, 177, 0.15); }
 
-        label {
-            display: block;
-            margin-bottom: 8px;
-            color: var(--text-muted);
-            font-size: 13px;
-            font-weight: 600;
-            letter-spacing: 0.5px;
-        }
-
-        input[type="date"], input[type="number"], input[type="text"] {
-            width: 100%;
-            padding: 14px 16px;
-            border: 2px solid #f0f0f0;
-            border-radius: 14px;
-            box-sizing: border-box;
-            font-size: 15px;
-            color: var(--text-main);
-            outline: none;
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-            background: #fafafa;
-        }
-
-        input:focus {
-            border-color: #f48fb1;
-            background: #fff;
-            box-shadow: 0 0 0 4px rgba(244, 143, 177, 0.15);
-        }
-
-        /* 按钮组样式 */
         .btn-group { display: flex; gap: 15px; margin-top: 25px; }
-
-        button {
-            padding: 15px 10px;
-            border-radius: 14px;
-            font-size: 15px;
-            cursor: pointer;
-            transition: all 0.3s;
-            font-weight: bold;
-            letter-spacing: 0.5px;
-            border: 2px solid var(--primary-color);
-        }
-
+        button { padding: 15px 10px; border-radius: 14px; font-size: 15px; cursor: pointer; transition: all 0.3s; font-weight: bold; letter-spacing: 0.5px; border: 2px solid var(--primary-color); }
         .btn-predict { background-color: var(--primary-color); color: white; flex: 1; box-shadow: 0 4px 15px rgba(216, 27, 96, 0.2);}
         .btn-predict:hover { background-color: var(--primary-hover); border-color: var(--primary-hover); transform: translateY(-2px);}
         .btn-record { background-color: transparent; color: var(--primary-color); flex: 1; }
         .btn-record:hover { background-color: var(--primary-light); transform: translateY(-2px);}
         
-        /* 预测结果卡片 */
-        .result-card {
-            margin-top: 25px; padding: 22px; background: linear-gradient(to right bottom, #fff, var(--primary-light));
-            border-radius: 18px; display: none; border-left: 5px solid var(--primary-color);
-            box-shadow: 0 5px 15px rgba(0,0,0,0.03);
-        }
+        .result-card { margin-top: 25px; padding: 22px; background: linear-gradient(to right bottom, #fff, var(--primary-light)); border-radius: 18px; display: none; border-left: 5px solid var(--primary-color); box-shadow: 0 5px 15px rgba(0,0,0,0.03); }
         .result-card.show { display: block; animation: slideUp 0.4s ease-out forwards; }
         .result-item { margin-bottom: 15px; }
         .result-item:last-child { margin-bottom: 0; }
         .result-label { font-size: 13px; color: var(--text-muted); margin-bottom: 5px; }
         .result-value { font-size: 18px; color: var(--primary-color); font-weight: 800; }
 
-        /* ================= 历史记录区域总入口 ================= */
-        .toggle-history-btn {
-            width: 100%;
-            padding: 14px;
-            background-color: transparent;
-            color: var(--primary-hover);
-            border: 2px dashed #f8bbd0;
-            border-radius: 14px;
-            font-size: 14px;
-            font-weight: 600;
-            cursor: pointer;
-            margin-top: 25px;
-            transition: all 0.3s;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            gap: 8px;
-        }
+        .toggle-history-btn { width: 100%; padding: 14px; background-color: transparent; color: var(--primary-hover); border: 2px dashed #f8bbd0; border-radius: 14px; font-size: 14px; font-weight: 600; cursor: pointer; margin-top: 25px; transition: all 0.3s; display: flex; justify-content: center; align-items: center; gap: 8px; }
         .toggle-history-btn:hover { background-color: var(--primary-light); border-color: var(--primary-hover); }
-        
         .history-content { display: none; margin-top: 20px; border-top: 1px dashed #e0e0e0; padding-top: 20px; animation: fadeIn 0.4s ease; }
         .history-content.show { display: block; }
         .history-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; }
@@ -161,82 +93,25 @@
         .clear-btn { padding: 0; border: none; background: none; color: #aab7c4; font-size: 13px; font-weight: normal; cursor: pointer;}
         .clear-btn:hover { color: var(--primary-color); background: none; text-decoration: underline;}
         
-        /* ================= 单独的年份目录（文件夹）样式 ================= */
-        .year-folder {
-            background: #fafafa;
-            color: var(--primary-color);
-            padding: 14px 18px;
-            border-radius: 12px;
-            margin-bottom: 10px;
-            font-weight: bold;
-            font-size: 15px;
-            cursor: pointer;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            transition: all 0.3s;
-            border: 1px solid #f0f0f0;
-        }
-        .year-folder:hover {
-            background: var(--primary-light);
-            border-color: #f8bbd0;
-        }
-        .year-folder .arrow {
-            transition: transform 0.3s;
-            font-size: 12px;
-            color: #bdc3c7;
-        }
-        .year-folder.open {
-            background: var(--primary-light);
-            border-color: #f8bbd0;
-            margin-bottom: 0;
-            border-bottom-left-radius: 0;
-            border-bottom-right-radius: 0;
-        }
-        .year-folder.open .arrow {
-            transform: rotate(90deg);
-            color: var(--primary-color);
-        }
-
-        .year-content {
-            display: none;
-            padding: 15px;
-            background: #fff;
-            border: 1px solid #f8bbd0;
-            border-top: none;
-            border-bottom-left-radius: 12px;
-            border-bottom-right-radius: 12px;
-            margin-bottom: 15px;
-            animation: fadeIn 0.3s ease;
-        }
+        .year-folder { background: #fafafa; color: var(--primary-color); padding: 14px 18px; border-radius: 12px; margin-bottom: 10px; font-weight: bold; font-size: 15px; cursor: pointer; display: flex; justify-content: space-between; align-items: center; transition: all 0.3s; border: 1px solid #f0f0f0; }
+        .year-folder:hover { background: var(--primary-light); border-color: #f8bbd0; }
+        .year-folder .arrow { transition: transform 0.3s; font-size: 12px; color: #bdc3c7; }
+        .year-folder.open { background: var(--primary-light); border-color: #f8bbd0; margin-bottom: 0; border-bottom-left-radius: 0; border-bottom-right-radius: 0; }
+        .year-folder.open .arrow { transform: rotate(90deg); color: var(--primary-color); }
+        .year-content { display: none; padding: 15px; background: #fff; border: 1px solid #f8bbd0; border-top: none; border-bottom-left-radius: 12px; border-bottom-right-radius: 12px; margin-bottom: 15px; animation: fadeIn 0.3s ease; }
         .year-content.show { display: block; }
 
-        /* 历史记录卡片 */
         .history-list { list-style: none; padding: 0; margin: 0; }
-        .history-card {
-            background: #fff; border: 1px solid #f0f0f0; border-radius: 12px;
-            padding: 15px; margin-bottom: 12px; font-size: 14px; position: relative;
-            box-shadow: 0 2px 6px rgba(0,0,0,0.02); transition: transform 0.2s;
-        }
+        .history-card { background: #fff; border: 1px solid #f0f0f0; border-radius: 12px; padding: 15px; margin-bottom: 12px; font-size: 14px; position: relative; box-shadow: 0 2px 6px rgba(0,0,0,0.02); transition: transform 0.2s; }
         .history-card:last-child { margin-bottom: 0; }
         .history-card:hover { border-color: #fce4ec; box-shadow: 0 4px 12px rgba(216, 27, 96, 0.05);}
         .history-card .date { font-weight: 800; color: var(--primary-color); margin-bottom: 6px; font-size: 15px;}
         .history-card .details { color: var(--text-muted); font-size: 12px; margin-bottom: 8px;}
-        
-        .intimacy-info {
-            background-color: var(--primary-light); color: var(--primary-hover);
-            padding: 8px 10px; border-radius: 8px; font-size: 12px;
-            display: flex; gap: 8px; flex-wrap: wrap; align-items: center; font-weight: 600;
-        }
+        .intimacy-info { background-color: var(--primary-light); color: var(--primary-hover); padding: 8px 10px; border-radius: 8px; font-size: 12px; display: flex; gap: 8px; flex-wrap: wrap; align-items: center; font-weight: 600; }
         .intimacy-info span { background: white; padding: 2px 6px; border-radius: 6px; box-shadow: 0 1px 3px rgba(0,0,0,0.05);}
-
-        .delete-item {
-            position: absolute; right: 15px; top: 15px; color: #e0e0e0; cursor: pointer;
-            font-size: 18px; border: none; background: none; padding: 0; line-height: 1;
-        }
+        .delete-item { position: absolute; right: 15px; top: 15px; color: #e0e0e0; cursor: pointer; font-size: 18px; border: none; background: none; padding: 0; line-height: 1; }
         .delete-item:hover { color: #ff5252; background: none; }
 
-        /* ================= 天气与日历等右侧组件 ================= */
         .weather-widget { display: flex; align-items: center; gap: 15px; background: linear-gradient(135deg, #fce4ec, #fff); padding: 15px 20px; border-radius: 18px; margin-bottom: 20px; border: 1px solid #f8bbd0; box-shadow: 0 4px 15px rgba(216, 27, 96, 0.05); }
         .weather-icon { font-size: 35px; }
         .weather-info { display: flex; flex-direction: column; gap: 3px; }
@@ -248,14 +123,17 @@
         .cal-header button { background: var(--primary-light); color: var(--primary-color); border: none; width: 32px; height: 32px; border-radius: 10px; display: flex; justify-content: center; align-items: center; padding: 0; font-size: 16px; }
         .cal-header button:hover { background: #f8bbd0; transform: scale(1.05); cursor: pointer;}
         .cal-month-year { font-weight: 800; color: var(--primary-color); font-size: 16px; }
-
         .cal-weekdays { display: grid; grid-template-columns: repeat(7, 1fr); text-align: center; font-size: 12px; font-weight: 600; color: #bdc3c7; margin-bottom: 10px; }
         .cal-days { display: grid; grid-template-columns: repeat(7, 1fr); gap: 8px; }
+        
         .cal-day { aspect-ratio: 1; display: flex; justify-content: center; align-items: center; border-radius: 12px; cursor: pointer; font-size: 14px; font-weight: 600; color: var(--text-main); position: relative; background: #fafafa; transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1); }
         .cal-day:hover { background: var(--primary-light); color: var(--primary-color); }
         .cal-day.empty { background: transparent; cursor: default; }
-        .cal-day.intimacy { background: var(--primary-light); color: var(--primary-hover); border: 2px solid #f48fb1; }
-        .cal-day.intimacy::after { content: "❤️"; font-size: 12px; position: absolute; bottom: -2px; right: -2px; background: white; border-radius: 50%; padding: 2px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); line-height: 1; }
+        
+        /* 日历历史回显样式 */
+        .cal-day.history-period { background-color: #fce4ec; color: var(--primary-color); }
+        .cal-day.active-select { background: var(--primary-light); color: var(--primary-hover); border: 2px solid #f48fb1; }
+        .cal-day.history-intimacy::after, .cal-day.active-select::after { content: "❤️"; font-size: 11px; position: absolute; bottom: -2px; right: -2px; background: white; border-radius: 50%; padding: 2px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); line-height: 1; }
 
         .tips-widget { background: #fff; padding: 15px 20px; border-radius: 16px; border-left: 4px solid #f48fb1; margin-top: auto; font-size: 13px; color: var(--text-muted); line-height: 1.6; box-shadow: 0 2px 10px rgba(0,0,0,0.02); margin-top: 20px; }
         .tips-title { font-weight: bold; color: var(--primary-color); margin-bottom: 6px; display: flex; align-items: center; gap: 5px; font-size: 14px;}
@@ -268,6 +146,20 @@
     </style>
 </head>
 <body>
+
+    <!-- 新增：密码锁屏界面 -->
+    <div id="lockScreen" class="lock-screen">
+        <div class="lock-box">
+            <div style="font-size: 45px; margin-bottom: 10px;">🔒</div>
+            <h2 id="lockTitle">隐私保护</h2>
+            <p id="lockDesc">为防止他人偷看，请设置一个4位数字密码。如不需要请直接跳过。</p>
+            <input type="password" id="pinInput" maxlength="4" placeholder="请输入4位密码" inputmode="numeric" pattern="[0-9]*">
+            <div class="lock-btns">
+                <button id="lockBtnLeft" class="btn-record" onclick="skipOrResetPin()">不用密码</button>
+                <button id="lockBtnRight" class="btn-predict" onclick="confirmPin()">设置并进入</button>
+            </div>
+        </div>
+    </div>
 
     <div class="layout-wrapper">
         <!-- 左侧：生理期与预测 -->
@@ -322,7 +214,6 @@
                 <div class="form-group" style="margin-bottom: 20px;">
                     <input type="text" id="searchInput" placeholder="🔍 在这里搜索 (如: 05月)" oninput="searchHistory()" style="padding: 12px 15px; font-size: 13px;">
                 </div>
-                <!-- 动态生成年份目录容器 -->
                 <div id="historyListContainer"></div>
             </div>
         </div>
@@ -345,7 +236,7 @@
                 <input type="number" id="actualDays" placeholder="例如：6（留空则默认等同预计天数）" min="1" max="15">
             </div>
 
-            <label>点击日历记录爱爱日期 👩‍❤️‍👨</label>
+            <label>点击日历记录爱爱日期 👩‍❤️‍👨（历史记录已固定展示）</label>
             <div class="calendar-container">
                 <div class="cal-header">
                     <button onclick="changeMonth(-1)">❮</button>
@@ -370,6 +261,69 @@
         let periodRecords = JSON.parse(localStorage.getItem('periodRecords')) || [];
         let currentIntimacyDates = []; 
         let currentCalDate = new Date(); 
+        
+        // --- 密码锁逻辑 ---
+        let appPin = localStorage.getItem('secretPin');
+
+        function initLock() {
+            const title = document.getElementById('lockTitle');
+            const desc = document.getElementById('lockDesc');
+            const btnLeft = document.getElementById('lockBtnLeft');
+            const btnRight = document.getElementById('lockBtnRight');
+            const input = document.getElementById('pinInput');
+
+            if (appPin) {
+                title.innerText = "请输入密码解锁";
+                desc.innerText = "你的记录已被加密保护。";
+                btnLeft.innerText = "忘记密码";
+                btnRight.innerText = "解锁进入";
+            } else {
+                title.innerText = "设置隐私密码";
+                desc.innerText = "为防止他人打开偷看，建议设置一个4位数字密码。";
+                btnLeft.innerText = "不用密码";
+                btnRight.innerText = "设置并进入";
+            }
+            // 允许回车提交
+            input.addEventListener("keyup", function(event) {
+                if (event.key === "Enter") confirmPin();
+            });
+        }
+
+        function confirmPin() {
+            const input = document.getElementById('pinInput').value;
+            if (appPin) {
+                if (input === appPin) {
+                    unlockApp();
+                } else {
+                    alert('密码错误啦，请重试！');
+                    document.getElementById('pinInput').value = '';
+                }
+            } else {
+                if (input.length > 0) {
+                    if(input.length !== 4) return alert('为了方便记忆，请设置4位数字密码哦！');
+                    localStorage.setItem('secretPin', input);
+                    appPin = input;
+                    alert('密码设置成功！下次打开将需要输入密码。');
+                }
+                unlockApp();
+            }
+        }
+
+        function skipOrResetPin() {
+            if (appPin) {
+                if(confirm("【警告】忘记密码重置，为了保护原有隐私，系统会强制清空以前的所有历史记录！确定要重置吗？")) {
+                    localStorage.removeItem('secretPin');
+                    localStorage.removeItem('periodRecords');
+                    location.reload();
+                }
+            } else {
+                unlockApp(); // 没密码就跳过
+            }
+        }
+
+        function unlockApp() {
+            document.getElementById('lockScreen').style.display = 'none';
+        }
 
         const periodTips = [
             "尽量不要碰冰冷的饮料和生冷食物哦，多喝点温热水。🍵",
@@ -377,12 +331,11 @@
             "如果肚子有点痛，可以尝试泡一杯红糖姜茶，暖暖身子。🤎",
             "避免剧烈运动和重体力劳动，可以选择散步或轻柔的瑜伽。🧘‍♀️",
             "保持清淡饮食，少吃辛辣刺激的食物，多吃富含铁和维生素的食物。🍎",
-            "如果感觉情绪低落是正常的激素变化，吃块巧克力，听听轻音乐放松一下吧。🍫",
-            "记得勤换卫生巾（建议每2-3小时一次），保持清爽卫生哦。✨",
-            "睡前可以泡泡脚，有助于促进血液循环，提高睡眠质量。🛁"
+            "如果感觉情绪低落是正常的激素变化，吃块巧克力，听听轻音乐放松一下吧。🍫"
         ];
 
         window.onload = function() {
+            initLock(); // 初始化锁屏
             const dateInput = document.getElementById('lastDate');
             dateInput.valueAsDate = new Date();
             
@@ -399,7 +352,6 @@
             });
         };
 
-        // 历史记录总入口的折叠
         function toggleHistory() {
             const content = document.getElementById('historyContent');
             const btn = document.getElementById('toggleHistoryBtn');
@@ -414,77 +366,89 @@
 
         function openHistory() {
             const content = document.getElementById('historyContent');
-            const btn = document.getElementById('toggleHistoryBtn');
+            document.getElementById('toggleHistoryBtn').innerHTML = '📂 收起历史档案';
             content.classList.add('show');
-            btn.innerHTML = '📂 收起历史档案';
         }
 
-        // 年份目录（单页）的展开与收起
         function toggleYearFolder(year) {
             const folderContent = document.getElementById(`year-content-${year}`);
             const folderHeader = document.getElementById(`year-folder-${year}`);
-            
             if (folderContent.classList.contains('show')) {
-                folderContent.classList.remove('show');
-                folderHeader.classList.remove('open');
+                folderContent.classList.remove('show'); folderHeader.classList.remove('open');
             } else {
-                folderContent.classList.add('show');
-                folderHeader.classList.add('open');
+                folderContent.classList.add('show'); folderHeader.classList.add('open');
             }
         }
 
-        function displayRandomTip() {
-            const tipEl = document.getElementById('dailyTip');
-            tipEl.innerText = periodTips[Math.floor(Math.random() * periodTips.length)];
-        }
+        function displayRandomTip() { document.getElementById('dailyTip').innerText = periodTips[Math.floor(Math.random() * periodTips.length)]; }
 
         function fetchWeather() {
             if (navigator.geolocation) {
                 navigator.geolocation.getCurrentPosition(
                     (position) => {
-                        const lat = position.coords.latitude;
-                        const lon = position.coords.longitude;
-                        fetch(`https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&current_weather=true`)
-                            .then(res => res.json())
-                            .then(data => { updateWeatherUI(data.current_weather.temperature, data.current_weather.weathercode); })
+                        fetch(`https://api.open-meteo.com/v1/forecast?latitude=${position.coords.latitude}&longitude=${position.coords.longitude}&current_weather=true`)
+                            .then(res => res.json()).then(data => updateWeatherUI(data.current_weather.temperature, data.current_weather.weathercode))
                             .catch(err => setWeatherFallback());
-                    },
-                    (error) => setWeatherFallback()
+                    }, () => setWeatherFallback()
                 );
             } else setWeatherFallback();
         }
 
         function updateWeatherUI(temp, code) {
             let icon = '🌤️'; let desc = '天气不错，保持好心情'; let suggestion = '';
-            if(code === 0) { icon = '☀️'; desc = '晴朗'; suggestion = '阳光很好，注意防晒哦'; }
-            else if(code >= 1 && code <= 3) { icon = '⛅'; desc = '多云'; suggestion = '紫外线不强，适合散步'; }
-            else if(code === 45 || code === 48) { icon = '🌫️'; desc = '雾天'; suggestion = '出门注意交通安全'; }
-            else if(code >= 51 && code <= 67) { icon = '🌧️'; desc = '雨天'; suggestion = '记得带把伞，当心淋雨受凉'; }
-            else if(code >= 71 && code <= 77) { icon = '❄️'; desc = '雪天'; suggestion = '多穿点，注意保暖哦'; }
-            else if(code >= 80 && code <= 82) { icon = '🌦️'; desc = '阵雨'; suggestion = '出门最好备一把晴雨伞'; }
-            else if(code >= 95 && code <= 99) { icon = '⛈️'; desc = '雷雨'; suggestion = '尽量留在室内，安全第一'; }
-            if(temp < 15) { suggestion += '（气温低，添件衣服吧）'; }
-            else if(temp > 30) { suggestion += '（气温高，多喝水哦）'; }
-
+            if(code === 0) { icon = '☀️'; desc = '晴朗'; }
+            else if(code >= 1 && code <= 3) { icon = '⛅'; desc = '多云'; }
+            else if(code === 45 || code === 48) { icon = '🌫️'; desc = '雾天'; }
+            else if(code >= 51 && code <= 67) { icon = '🌧️'; desc = '雨天'; }
+            else if(code >= 71 && code <= 77) { icon = '❄️'; desc = '雪天'; }
+            else if(code >= 80 && code <= 82) { icon = '🌦️'; desc = '阵雨'; }
+            else if(code >= 95 && code <= 99) { icon = '⛈️'; desc = '雷雨'; }
+            if(temp < 15) suggestion += '（气温偏低，记得添衣）'; else if(temp > 30) suggestion += '（气温较高，多喝水哦）';
             document.getElementById('weatherIcon').innerText = icon;
             document.getElementById('weatherTemp').innerText = `今天气温 ${temp}°C | ${desc}`;
-            document.getElementById('weatherDesc').innerText = suggestion;
+            document.getElementById('weatherDesc').innerText = suggestion || '按你喜欢的方式度过今天吧';
         }
 
         function setWeatherFallback() {
             document.getElementById('weatherIcon').innerText = '🏠';
-            document.getElementById('weatherTemp').innerText = '未能获取天气信息';
+            document.getElementById('weatherTemp').innerText = '未能获取位置信息';
             document.getElementById('weatherDesc').innerText = '不论天气如何，都要照顾好自己哦';
         }
 
         const formatDate = (date) => {
-            const y = date.getFullYear(); const m = String(date.getMonth() + 1).padStart(2, '0'); const d = String(date.getDate()).padStart(2, '0');
-            return `${y}年${m}月${d}日`;
+            return `${date.getFullYear()}年${String(date.getMonth() + 1).padStart(2, '0')}月${String(date.getDate()).padStart(2, '0')}日`;
         };
 
+        // --- 核心：日历历史回显渲染 ---
         function renderCalendar() {
             const year = currentCalDate.getFullYear(); const month = currentCalDate.getMonth();
             document.getElementById('calMonthYear').innerText = `${year}年 ${month + 1}月`;
+            
+            // 提取所有历史的经期天数和爱爱天数，准备印在日历上
+            const savedPeriodDates = new Set();
+            const savedIntimacyDates = new Set();
+
+            periodRecords.forEach(record => {
+                let sDate = new Date(record.timestamp);
+                let days = record.actualDays || record.period;
+                // 推算这几天全部标记为粉红背景
+                for(let i = 0; i < days; i++) {
+                    let d = new Date(sDate); d.setDate(d.getDate() + i);
+                    savedPeriodDates.add(`${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`);
+                }
+                // 还原爱爱日期
+                if(record.intimacyDates) {
+                    record.intimacyDates.forEach(idate => {
+                        if(idate.includes('-')) { savedIntimacyDates.add(idate); } 
+                        else {
+                            // 兼容老数据（MM月DD日格式）
+                            let m = idate.substring(0, 2); let d = idate.substring(3, 5);
+                            savedIntimacyDates.add(`${sDate.getFullYear()}-${m}-${d}`);
+                        }
+                    });
+                }
+            });
+
             const firstDayIndex = new Date(year, month, 1).getDay();
             const daysInMonth = new Date(year, month + 1, 0).getDate(); 
             const calDaysEl = document.getElementById('calDays');
@@ -492,15 +456,23 @@
             
             for(let i = 0; i < firstDayIndex; i++) {
                 const emptyDiv = document.createElement('div');
-                emptyDiv.className = 'cal-day empty';
-                calDaysEl.appendChild(emptyDiv);
+                emptyDiv.className = 'cal-day empty'; calDaysEl.appendChild(emptyDiv);
             }
             
             for(let i = 1; i <= daysInMonth; i++) {
                 const dateStr = `${year}-${String(month + 1).padStart(2, '0')}-${String(i).padStart(2, '0')}`;
-                const isSelected = currentIntimacyDates.includes(dateStr);
+                
+                const isSelectedForNew = currentIntimacyDates.includes(dateStr); // 当前正准备存的
+                const isHistoryIntimacy = savedIntimacyDates.has(dateStr); // 历史已经存了的
+                const isHistoryPeriod = savedPeriodDates.has(dateStr); // 历史经期
+
                 const dayDiv = document.createElement('div');
-                dayDiv.className = `cal-day ${isSelected ? 'intimacy' : ''}`;
+                let classes = 'cal-day';
+                if(isHistoryPeriod) classes += ' history-period';
+                if(isSelectedForNew) classes += ' active-select';
+                if(isHistoryIntimacy) classes += ' history-intimacy';
+
+                dayDiv.className = classes;
                 dayDiv.innerText = i;
                 dayDiv.onclick = () => toggleIntimacy(dateStr);
                 calDaysEl.appendChild(dayDiv);
@@ -508,8 +480,11 @@
         }
 
         function toggleIntimacy(dateStr) {
-            if(currentIntimacyDates.includes(dateStr)) currentIntimacyDates = currentIntimacyDates.filter(d => d !== dateStr);
-            else currentIntimacyDates.push(dateStr);
+            if(currentIntimacyDates.includes(dateStr)) {
+                currentIntimacyDates = currentIntimacyDates.filter(d => d !== dateStr);
+            } else {
+                currentIntimacyDates.push(dateStr);
+            }
             renderCalendar();
         }
 
@@ -522,7 +497,6 @@
             const lastDate = document.getElementById('lastDate').value;
             const cycleLength = parseInt(document.getElementById('cycleLength').value);
             const periodLength = parseInt(document.getElementById('periodLength').value);
-
             if(!lastDate || !cycleLength || !periodLength) return alert("请填完左侧的必填信息哦！");
 
             const lastDateObj = new Date(lastDate);
@@ -551,12 +525,14 @@
             if(!lastDate || !cycleLength || !periodLength) return alert("请填完左侧的基础信息才能保存记录哦！");
 
             const lastDateObj = new Date(lastDate);
-            const formattedIntimacyDates = currentIntimacyDates.map(dateStr => { const parts = dateStr.split('-'); return `${parts[1]}月${parts[2]}日`; });
-            formattedIntimacyDates.sort();
+            
+            // 为了历史回显更准，直接保存 YYYY-MM-DD 格式
+            const rawIntimacyDates = [...currentIntimacyDates];
+            rawIntimacyDates.sort();
 
             const newRecord = {
                 id: Date.now(), startDate: formatDate(lastDateObj), cycle: cycleLength,
-                period: periodLength, actualDays: actualDays, intimacyDates: formattedIntimacyDates, timestamp: lastDateObj.getTime()
+                period: periodLength, actualDays: actualDays, intimacyDates: rawIntimacyDates, timestamp: lastDateObj.getTime()
             };
 
             if (!periodRecords.some(record => record.startDate === newRecord.startDate)) {
@@ -565,21 +541,19 @@
                 localStorage.setItem('periodRecords', JSON.stringify(periodRecords));
                 
                 document.getElementById('searchInput').value = '';
-                renderHistory();
-                
                 document.getElementById('actualDays').value = '';
-                currentIntimacyDates = []; renderCalendar();
+                currentIntimacyDates = []; // 保存后清空输入缓存
+                
+                renderHistory();
+                renderCalendar(); // 重新渲染日历让心心固定住
 
                 const recordBtn = document.querySelector('.btn-record'); const originalText = recordBtn.innerText;
                 recordBtn.innerText = "✅ 保存成功";
                 openHistory();
                 setTimeout(() => { recordBtn.innerText = originalText; }, 1500);
-            } else {
-                alert("这一天已经记录过啦！如果需要修改，请先删除历史记录中的对应项。");
-            }
+            } else alert("这一天已经记录过啦！");
         }
 
-        // ================= 核心渲染逻辑：按年份生成独立页面/文件夹 ================= 
         function renderHistory(recordsToRender = periodRecords, isSearch = false) {
             const container = document.getElementById('historyListContainer');
             container.innerHTML = ''; 
@@ -589,7 +563,6 @@
                 return;
             }
 
-            // 按年份分组
             const groupedRecords = {};
             recordsToRender.forEach(record => {
                 const year = record.startDate.split('年')[0]; 
@@ -597,27 +570,19 @@
                 groupedRecords[year].push(record);
             });
 
-            // 年份从新到旧排序
             const sortedYears = Object.keys(groupedRecords).sort((a, b) => b - a);
 
             sortedYears.forEach((year, index) => {
-                // 1. 生成年份文件夹按钮
                 const folderHeader = document.createElement('div');
                 folderHeader.id = `year-folder-${year}`;
                 folderHeader.className = 'year-folder';
-                
-                // 默认策略：如果是在搜索，或者是最新的那一年（第一项），就默认展开它。
                 const shouldOpen = isSearch || index === 0;
                 if (shouldOpen) folderHeader.classList.add('open');
 
-                folderHeader.innerHTML = `
-                    <span>🗓️ ${year}年度 (${groupedRecords[year].length}次记录)</span>
-                    <span class="arrow">▶</span>
-                `;
+                folderHeader.innerHTML = `<span>🗓️ ${year}年度 (${groupedRecords[year].length}次记录)</span><span class="arrow">▶</span>`;
                 folderHeader.onclick = () => toggleYearFolder(year);
                 container.appendChild(folderHeader);
 
-                // 2. 生成年份文件夹的详细内容
                 const folderContent = document.createElement('div');
                 folderContent.id = `year-content-${year}`;
                 folderContent.className = `year-content ${shouldOpen ? 'show' : ''}`;
@@ -631,7 +596,13 @@
                     
                     let intimacyHtml = '';
                     if(record.intimacyDates && record.intimacyDates.length > 0) {
-                        const spanTags = record.intimacyDates.map(d => `<span>${d}</span>`).join('');
+                        const spanTags = record.intimacyDates.map(d => {
+                            // 转化 YYYY-MM-DD 为 MM月DD日 展示
+                            if(d.includes('-')) {
+                                const parts = d.split('-'); return `<span>${parts[1]}月${parts[2]}日</span>`;
+                            }
+                            return `<span>${d}</span>`;
+                        }).join('');
                         intimacyHtml = `<div class="intimacy-info">👩‍❤️‍👨 爱爱：${spanTags}</div>`;
                     }
 
@@ -645,38 +616,31 @@
                     `;
                     ul.appendChild(li);
                 });
-
-                folderContent.appendChild(ul);
-                container.appendChild(folderContent);
+                folderContent.appendChild(ul); container.appendChild(folderContent);
             });
         }
 
         function searchHistory() {
             const query = document.getElementById('searchInput').value.trim();
-            if (!query) {
-                renderHistory(periodRecords, false);
-                return;
-            }
-            const filteredRecords = periodRecords.filter(record => record.startDate.includes(query));
-            // 传入 true，表示正在搜索，搜索出的年份目录会自动全部展开
-            renderHistory(filteredRecords, true);
+            if (!query) { renderHistory(periodRecords, false); return; }
+            renderHistory(periodRecords.filter(record => record.startDate.includes(query)), true);
         }
 
         function deleteRecord(id) {
-            if(confirm('确定要删除这条记录吗？')) {
+            if(confirm('确定要删除这条记录吗？删掉后日历上的心心也会随之消失哦。')) {
                 periodRecords = periodRecords.filter(record => record.id !== id);
                 localStorage.setItem('periodRecords', JSON.stringify(periodRecords));
                 searchHistory(); 
+                renderCalendar(); // 删了记录刷新日历
             }
         }
 
         function clearAllHistory() {
             if(periodRecords.length === 0) return;
             if(confirm('警告：确定要清空所有的历史记录吗？不可恢复哦。')) {
-                periodRecords = [];
-                localStorage.removeItem('periodRecords');
+                periodRecords = []; localStorage.removeItem('periodRecords');
                 document.getElementById('searchInput').value = '';
-                renderHistory();
+                renderHistory(); renderCalendar();
             }
         }
     </script>
