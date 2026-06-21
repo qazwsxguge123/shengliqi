@@ -134,7 +134,7 @@
         .result-label { font-size: 13px; color: var(--text-muted); margin-bottom: 5px; }
         .result-value { font-size: 18px; color: var(--primary-color); font-weight: 800; }
 
-        /* ================= 历史记录折叠区样式 ================= */
+        /* ================= 历史记录区域总入口 ================= */
         .toggle-history-btn {
             width: 100%;
             padding: 14px;
@@ -152,135 +152,116 @@
             align-items: center;
             gap: 8px;
         }
-        .toggle-history-btn:hover {
-            background-color: var(--primary-light);
-            border-color: var(--primary-hover);
-        }
+        .toggle-history-btn:hover { background-color: var(--primary-light); border-color: var(--primary-hover); }
         
-        .history-content {
-            display: none;
-            margin-top: 20px;
-            border-top: 1px dashed #e0e0e0;
-            padding-top: 20px;
-            animation: fadeIn 0.4s ease;
-        }
-        .history-content.show {
-            display: block;
-        }
-
+        .history-content { display: none; margin-top: 20px; border-top: 1px dashed #e0e0e0; padding-top: 20px; animation: fadeIn 0.4s ease; }
+        .history-content.show { display: block; }
         .history-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; }
         .history-header h2 { font-size: 16px; margin: 0;}
-        .clear-btn { padding: 0; border: none; background: none; color: #aab7c4; font-size: 13px; font-weight: normal; }
+        .clear-btn { padding: 0; border: none; background: none; color: #aab7c4; font-size: 13px; font-weight: normal; cursor: pointer;}
         .clear-btn:hover { color: var(--primary-color); background: none; text-decoration: underline;}
         
-        /* 年份分组标题 */
-        .year-header {
-            font-size: 15px;
-            font-weight: bold;
+        /* ================= 单独的年份目录（文件夹）样式 ================= */
+        .year-folder {
+            background: #fafafa;
             color: var(--primary-color);
-            margin: 20px 0 10px 0;
-            padding-bottom: 6px;
-            border-bottom: 2px solid #fce4ec;
+            padding: 14px 18px;
+            border-radius: 12px;
+            margin-bottom: 10px;
+            font-weight: bold;
+            font-size: 15px;
+            cursor: pointer;
             display: flex;
+            justify-content: space-between;
             align-items: center;
+            transition: all 0.3s;
+            border: 1px solid #f0f0f0;
         }
-        .year-header::before {
-            content: '🗓️';
-            margin-right: 6px;
-            font-size: 14px;
+        .year-folder:hover {
+            background: var(--primary-light);
+            border-color: #f8bbd0;
         }
-        .year-header:first-child { margin-top: 0; }
+        .year-folder .arrow {
+            transition: transform 0.3s;
+            font-size: 12px;
+            color: #bdc3c7;
+        }
+        .year-folder.open {
+            background: var(--primary-light);
+            border-color: #f8bbd0;
+            margin-bottom: 0;
+            border-bottom-left-radius: 0;
+            border-bottom-right-radius: 0;
+        }
+        .year-folder.open .arrow {
+            transform: rotate(90deg);
+            color: var(--primary-color);
+        }
 
+        .year-content {
+            display: none;
+            padding: 15px;
+            background: #fff;
+            border: 1px solid #f8bbd0;
+            border-top: none;
+            border-bottom-left-radius: 12px;
+            border-bottom-right-radius: 12px;
+            margin-bottom: 15px;
+            animation: fadeIn 0.3s ease;
+        }
+        .year-content.show { display: block; }
+
+        /* 历史记录卡片 */
         .history-list { list-style: none; padding: 0; margin: 0; }
         .history-card {
-            background: #fff; border: 1px solid #f0f0f0; border-radius: 16px;
-            padding: 18px; margin-bottom: 12px; font-size: 14px; position: relative;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.02); transition: transform 0.2s;
+            background: #fff; border: 1px solid #f0f0f0; border-radius: 12px;
+            padding: 15px; margin-bottom: 12px; font-size: 14px; position: relative;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.02); transition: transform 0.2s;
         }
-        .history-card:hover { transform: translateY(-2px); border-color: #fce4ec; box-shadow: 0 5px 15px rgba(216, 27, 96, 0.05);}
-        .history-card .date { font-weight: 800; color: var(--primary-color); margin-bottom: 8px; font-size: 16px;}
-        .history-card .details { color: var(--text-muted); font-size: 13px; margin-bottom: 10px;}
+        .history-card:last-child { margin-bottom: 0; }
+        .history-card:hover { border-color: #fce4ec; box-shadow: 0 4px 12px rgba(216, 27, 96, 0.05);}
+        .history-card .date { font-weight: 800; color: var(--primary-color); margin-bottom: 6px; font-size: 15px;}
+        .history-card .details { color: var(--text-muted); font-size: 12px; margin-bottom: 8px;}
         
         .intimacy-info {
             background-color: var(--primary-light); color: var(--primary-hover);
-            padding: 10px 12px; border-radius: 10px; font-size: 12px;
+            padding: 8px 10px; border-radius: 8px; font-size: 12px;
             display: flex; gap: 8px; flex-wrap: wrap; align-items: center; font-weight: 600;
         }
-        .intimacy-info span { background: white; padding: 3px 8px; border-radius: 6px; box-shadow: 0 1px 3px rgba(0,0,0,0.05);}
+        .intimacy-info span { background: white; padding: 2px 6px; border-radius: 6px; box-shadow: 0 1px 3px rgba(0,0,0,0.05);}
 
         .delete-item {
-            position: absolute; right: 18px; top: 18px; color: #e0e0e0; cursor: pointer;
-            font-size: 20px; border: none; background: none; padding: 0; line-height: 1;
+            position: absolute; right: 15px; top: 15px; color: #e0e0e0; cursor: pointer;
+            font-size: 18px; border: none; background: none; padding: 0; line-height: 1;
         }
         .delete-item:hover { color: #ff5252; background: none; }
 
-        /* ================= 天气组件 ================= */
-        .weather-widget {
-            display: flex;
-            align-items: center;
-            gap: 15px;
-            background: linear-gradient(135deg, #fce4ec, #fff);
-            padding: 15px 20px;
-            border-radius: 18px;
-            margin-bottom: 20px;
-            border: 1px solid #f8bbd0;
-            box-shadow: 0 4px 15px rgba(216, 27, 96, 0.05);
-        }
+        /* ================= 天气与日历等右侧组件 ================= */
+        .weather-widget { display: flex; align-items: center; gap: 15px; background: linear-gradient(135deg, #fce4ec, #fff); padding: 15px 20px; border-radius: 18px; margin-bottom: 20px; border: 1px solid #f8bbd0; box-shadow: 0 4px 15px rgba(216, 27, 96, 0.05); }
         .weather-icon { font-size: 35px; }
         .weather-info { display: flex; flex-direction: column; gap: 3px; }
         .weather-temp { font-weight: 800; font-size: 16px; color: var(--primary-color); }
         .weather-desc { font-size: 12px; color: var(--text-muted); }
 
-        /* ================= 日历组件样式 ================= */
-        .calendar-container {
-            background: #fff;
-            border: 1px solid #f0f0f0;
-            border-radius: 20px;
-            padding: 20px;
-            margin-top: 5px;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.02);
-        }
-
+        .calendar-container { background: #fff; border: 1px solid #f0f0f0; border-radius: 20px; padding: 20px; margin-top: 5px; box-shadow: 0 4px 15px rgba(0,0,0,0.02); }
         .cal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
-        .cal-header button {
-            background: var(--primary-light); color: var(--primary-color); border: none;
-            width: 32px; height: 32px; border-radius: 10px; display: flex;
-            justify-content: center; align-items: center; padding: 0; font-size: 16px;
-        }
-        .cal-header button:hover { background: #f8bbd0; transform: scale(1.05); }
+        .cal-header button { background: var(--primary-light); color: var(--primary-color); border: none; width: 32px; height: 32px; border-radius: 10px; display: flex; justify-content: center; align-items: center; padding: 0; font-size: 16px; }
+        .cal-header button:hover { background: #f8bbd0; transform: scale(1.05); cursor: pointer;}
         .cal-month-year { font-weight: 800; color: var(--primary-color); font-size: 16px; }
 
-        .cal-weekdays {
-            display: grid; grid-template-columns: repeat(7, 1fr); text-align: center;
-            font-size: 12px; font-weight: 600; color: #bdc3c7; margin-bottom: 10px;
-        }
+        .cal-weekdays { display: grid; grid-template-columns: repeat(7, 1fr); text-align: center; font-size: 12px; font-weight: 600; color: #bdc3c7; margin-bottom: 10px; }
         .cal-days { display: grid; grid-template-columns: repeat(7, 1fr); gap: 8px; }
-        .cal-day {
-            aspect-ratio: 1; display: flex; justify-content: center; align-items: center;
-            border-radius: 12px; cursor: pointer; font-size: 14px; font-weight: 600;
-            color: var(--text-main); position: relative; background: #fafafa;
-            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
-        }
+        .cal-day { aspect-ratio: 1; display: flex; justify-content: center; align-items: center; border-radius: 12px; cursor: pointer; font-size: 14px; font-weight: 600; color: var(--text-main); position: relative; background: #fafafa; transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1); }
         .cal-day:hover { background: var(--primary-light); color: var(--primary-color); }
         .cal-day.empty { background: transparent; cursor: default; }
-        
         .cal-day.intimacy { background: var(--primary-light); color: var(--primary-hover); border: 2px solid #f48fb1; }
-        .cal-day.intimacy::after {
-            content: "❤️"; font-size: 12px; position: absolute; bottom: -2px; right: -2px;
-            background: white; border-radius: 50%; padding: 2px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); line-height: 1;
-        }
+        .cal-day.intimacy::after { content: "❤️"; font-size: 12px; position: absolute; bottom: -2px; right: -2px; background: white; border-radius: 50%; padding: 2px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); line-height: 1; }
 
-        /* ================= 温馨贴士卡片 ================= */
-        .tips-widget {
-            background: #fff; padding: 15px 20px; border-radius: 16px;
-            border-left: 4px solid #f48fb1; margin-top: auto; 
-            font-size: 13px; color: var(--text-muted); line-height: 1.6;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.02); margin-top: 20px;
-        }
+        .tips-widget { background: #fff; padding: 15px 20px; border-radius: 16px; border-left: 4px solid #f48fb1; margin-top: auto; font-size: 13px; color: var(--text-muted); line-height: 1.6; box-shadow: 0 2px 10px rgba(0,0,0,0.02); margin-top: 20px; }
         .tips-title { font-weight: bold; color: var(--primary-color); margin-bottom: 6px; display: flex; align-items: center; gap: 5px; font-size: 14px;}
 
         @keyframes slideUp { from { opacity: 0; transform: translateY(15px); } to { opacity: 1; transform: translateY(0); } }
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(-10px); } to { opacity: 1; transform: translateY(0); } }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(-5px); } to { opacity: 1; transform: translateY(0); } }
         
         .left-panel::-webkit-scrollbar { width: 6px; }
         .left-panel::-webkit-scrollbar-thumb { background-color: #f8bbd0; border-radius: 10px; }
@@ -329,19 +310,19 @@
                 </div>
             </div>
 
-            <!-- 隐藏/展开历史记录的按钮 -->
-            <button class="toggle-history-btn" id="toggleHistoryBtn" onclick="toggleHistory()">📂 点击查看历史记录</button>
+            <!-- 隐藏/展开历史记录的主入口 -->
+            <button class="toggle-history-btn" id="toggleHistoryBtn" onclick="toggleHistory()">📂 点击查看所有历史记录</button>
 
             <!-- 历史记录区域（默认隐藏） -->
             <div id="historyContent" class="history-content">
                 <div class="history-header">
-                    <h2>📅 历史记录</h2>
+                    <h2>📅 历史档案</h2>
                     <button class="clear-btn" onclick="clearAllHistory()">清空全部</button>
                 </div>
-                <div class="form-group" style="margin-bottom: 15px;">
-                    <input type="text" id="searchInput" placeholder="🔍 搜索年份/月份 (如: 2024)" oninput="searchHistory()" style="padding: 10px 15px; font-size: 13px;">
+                <div class="form-group" style="margin-bottom: 20px;">
+                    <input type="text" id="searchInput" placeholder="🔍 在这里搜索 (如: 05月)" oninput="searchHistory()" style="padding: 12px 15px; font-size: 13px;">
                 </div>
-                <!-- 改为动态生成年份分组容器 -->
+                <!-- 动态生成年份目录容器 -->
                 <div id="historyListContainer"></div>
             </div>
         </div>
@@ -349,7 +330,6 @@
         <!-- 右侧：详细事件与日历打卡 -->
         <div class="panel right-panel">
             
-            <!-- 天气模块 -->
             <div class="weather-widget" id="weatherWidget">
                 <div class="weather-icon" id="weatherIcon">🌍</div>
                 <div class="weather-info">
@@ -378,7 +358,6 @@
                 <div class="cal-days" id="calDays"></div>
             </div>
 
-            <!-- 注意事项贴士模块 -->
             <div class="tips-widget">
                 <div class="tips-title">💡 仙女贴士</div>
                 <div id="dailyTip">正在为你翻阅健康手册...</div>
@@ -420,31 +399,43 @@
             });
         };
 
-        // --- 历史记录折叠功能 ---
+        // 历史记录总入口的折叠
         function toggleHistory() {
             const content = document.getElementById('historyContent');
             const btn = document.getElementById('toggleHistoryBtn');
             if (content.classList.contains('show')) {
                 content.classList.remove('show');
-                btn.innerHTML = '📂 点击查看历史记录';
+                btn.innerHTML = '📂 点击查看所有历史记录';
             } else {
                 content.classList.add('show');
-                btn.innerHTML = '📂 收起历史记录';
+                btn.innerHTML = '📂 收起历史档案';
             }
         }
 
-        // 强行展开历史记录（用于保存后自动展示）
         function openHistory() {
             const content = document.getElementById('historyContent');
             const btn = document.getElementById('toggleHistoryBtn');
             content.classList.add('show');
-            btn.innerHTML = '📂 收起历史记录';
+            btn.innerHTML = '📂 收起历史档案';
+        }
+
+        // 年份目录（单页）的展开与收起
+        function toggleYearFolder(year) {
+            const folderContent = document.getElementById(`year-content-${year}`);
+            const folderHeader = document.getElementById(`year-folder-${year}`);
+            
+            if (folderContent.classList.contains('show')) {
+                folderContent.classList.remove('show');
+                folderHeader.classList.remove('open');
+            } else {
+                folderContent.classList.add('show');
+                folderHeader.classList.add('open');
+            }
         }
 
         function displayRandomTip() {
             const tipEl = document.getElementById('dailyTip');
-            const randomTip = periodTips[Math.floor(Math.random() * periodTips.length)];
-            tipEl.innerText = randomTip;
+            tipEl.innerText = periodTips[Math.floor(Math.random() * periodTips.length)];
         }
 
         function fetchWeather() {
@@ -455,34 +446,25 @@
                         const lon = position.coords.longitude;
                         fetch(`https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&current_weather=true`)
                             .then(res => res.json())
-                            .then(data => {
-                                const weather = data.current_weather;
-                                updateWeatherUI(weather.temperature, weather.weathercode);
-                            })
+                            .then(data => { updateWeatherUI(data.current_weather.temperature, data.current_weather.weathercode); })
                             .catch(err => setWeatherFallback());
                     },
                     (error) => setWeatherFallback()
                 );
-            } else {
-                setWeatherFallback();
-            }
+            } else setWeatherFallback();
         }
 
         function updateWeatherUI(temp, code) {
-            let icon = '🌤️';
-            let desc = '天气不错，保持好心情';
-            let suggestion = '';
-
+            let icon = '🌤️'; let desc = '天气不错，保持好心情'; let suggestion = '';
             if(code === 0) { icon = '☀️'; desc = '晴朗'; suggestion = '阳光很好，注意防晒哦'; }
             else if(code >= 1 && code <= 3) { icon = '⛅'; desc = '多云'; suggestion = '紫外线不强，适合散步'; }
             else if(code === 45 || code === 48) { icon = '🌫️'; desc = '雾天'; suggestion = '出门注意交通安全'; }
             else if(code >= 51 && code <= 67) { icon = '🌧️'; desc = '雨天'; suggestion = '记得带把伞，当心淋雨受凉'; }
-            else if(code >= 71 && code <= 77) { icon = '❄️'; desc = '雪天'; suggestion = '多穿点，一定要注意保暖哦'; }
+            else if(code >= 71 && code <= 77) { icon = '❄️'; desc = '雪天'; suggestion = '多穿点，注意保暖哦'; }
             else if(code >= 80 && code <= 82) { icon = '🌦️'; desc = '阵雨'; suggestion = '出门最好备一把晴雨伞'; }
             else if(code >= 95 && code <= 99) { icon = '⛈️'; desc = '雷雨'; suggestion = '尽量留在室内，安全第一'; }
-
-            if(temp < 15) { suggestion += '（气温偏低，记得添衣）'; }
-            else if(temp > 30) { suggestion += '（有点热，多补充水分）'; }
+            if(temp < 15) { suggestion += '（气温低，添件衣服吧）'; }
+            else if(temp > 30) { suggestion += '（气温高，多喝水哦）'; }
 
             document.getElementById('weatherIcon').innerText = icon;
             document.getElementById('weatherTemp').innerText = `今天气温 ${temp}°C | ${desc}`;
@@ -496,21 +478,15 @@
         }
 
         const formatDate = (date) => {
-            const y = date.getFullYear();
-            const m = String(date.getMonth() + 1).padStart(2, '0');
-            const d = String(date.getDate()).padStart(2, '0');
+            const y = date.getFullYear(); const m = String(date.getMonth() + 1).padStart(2, '0'); const d = String(date.getDate()).padStart(2, '0');
             return `${y}年${m}月${d}日`;
         };
 
         function renderCalendar() {
-            const year = currentCalDate.getFullYear();
-            const month = currentCalDate.getMonth();
-            
+            const year = currentCalDate.getFullYear(); const month = currentCalDate.getMonth();
             document.getElementById('calMonthYear').innerText = `${year}年 ${month + 1}月`;
-            
             const firstDayIndex = new Date(year, month, 1).getDay();
             const daysInMonth = new Date(year, month + 1, 0).getDate(); 
-            
             const calDaysEl = document.getElementById('calDays');
             calDaysEl.innerHTML = '';
             
@@ -523,22 +499,17 @@
             for(let i = 1; i <= daysInMonth; i++) {
                 const dateStr = `${year}-${String(month + 1).padStart(2, '0')}-${String(i).padStart(2, '0')}`;
                 const isSelected = currentIntimacyDates.includes(dateStr);
-                
                 const dayDiv = document.createElement('div');
                 dayDiv.className = `cal-day ${isSelected ? 'intimacy' : ''}`;
                 dayDiv.innerText = i;
-                
                 dayDiv.onclick = () => toggleIntimacy(dateStr);
                 calDaysEl.appendChild(dayDiv);
             }
         }
 
         function toggleIntimacy(dateStr) {
-            if(currentIntimacyDates.includes(dateStr)) {
-                currentIntimacyDates = currentIntimacyDates.filter(d => d !== dateStr);
-            } else {
-                currentIntimacyDates.push(dateStr);
-            }
+            if(currentIntimacyDates.includes(dateStr)) currentIntimacyDates = currentIntimacyDates.filter(d => d !== dateStr);
+            else currentIntimacyDates.push(dateStr);
             renderCalendar();
         }
 
@@ -552,35 +523,21 @@
             const cycleLength = parseInt(document.getElementById('cycleLength').value);
             const periodLength = parseInt(document.getElementById('periodLength').value);
 
-            if(!lastDate || !cycleLength || !periodLength) {
-                alert("请填完左侧的必填信息哦！");
-                return;
-            }
+            if(!lastDate || !cycleLength || !periodLength) return alert("请填完左侧的必填信息哦！");
 
             const lastDateObj = new Date(lastDate);
-            const nextStartObj = new Date(lastDateObj);
-            nextStartObj.setDate(nextStartObj.getDate() + cycleLength);
-            
-            const nextEndObj = new Date(nextStartObj);
-            nextEndObj.setDate(nextEndObj.getDate() + periodLength - 1); 
-            
-            const ovulationObj = new Date(nextStartObj);
-            ovulationObj.setDate(ovulationObj.getDate() - 14);
-            
-            const fertileStart = new Date(ovulationObj);
-            fertileStart.setDate(fertileStart.getDate() - 4);
-            const fertileEnd = new Date(ovulationObj);
-            fertileEnd.setDate(fertileEnd.getDate() + 1);
+            const nextStartObj = new Date(lastDateObj); nextStartObj.setDate(nextStartObj.getDate() + cycleLength);
+            const nextEndObj = new Date(nextStartObj); nextEndObj.setDate(nextEndObj.getDate() + periodLength - 1); 
+            const ovulationObj = new Date(nextStartObj); ovulationObj.setDate(ovulationObj.getDate() - 14);
+            const fertileStart = new Date(ovulationObj); fertileStart.setDate(fertileStart.getDate() - 4);
+            const fertileEnd = new Date(ovulationObj); fertileEnd.setDate(fertileEnd.getDate() + 1);
 
             document.getElementById('nextStartDate').innerText = formatDate(nextStartObj);
             document.getElementById('nextEndDate').innerText = formatDate(nextEndObj);
             document.getElementById('fertileWindow').innerText = `${formatDate(fertileStart)} 至 ${formatDate(fertileEnd)}`;
 
             const resultCard = document.getElementById('result');
-            resultCard.classList.remove('show');
-            void resultCard.offsetWidth; 
-            resultCard.classList.add('show');
-            
+            resultCard.classList.remove('show'); void resultCard.offsetWidth; resultCard.classList.add('show');
             displayRandomTip();
         }
 
@@ -591,91 +548,83 @@
             const actualDaysInput = document.getElementById('actualDays').value;
             const actualDays = actualDaysInput ? parseInt(actualDaysInput) : periodLength;
 
-            if(!lastDate || !cycleLength || !periodLength) {
-                alert("请填完左侧的基础信息才能保存记录哦！");
-                return;
-            }
+            if(!lastDate || !cycleLength || !periodLength) return alert("请填完左侧的基础信息才能保存记录哦！");
 
             const lastDateObj = new Date(lastDate);
-            
-            const formattedIntimacyDates = currentIntimacyDates.map(dateStr => {
-                const parts = dateStr.split('-');
-                return `${parts[1]}月${parts[2]}日`;
-            });
+            const formattedIntimacyDates = currentIntimacyDates.map(dateStr => { const parts = dateStr.split('-'); return `${parts[1]}月${parts[2]}日`; });
             formattedIntimacyDates.sort();
 
             const newRecord = {
-                id: Date.now(),
-                startDate: formatDate(lastDateObj),
-                cycle: cycleLength,
-                period: periodLength,
-                actualDays: actualDays,
-                intimacyDates: formattedIntimacyDates,
-                timestamp: lastDateObj.getTime()
+                id: Date.now(), startDate: formatDate(lastDateObj), cycle: cycleLength,
+                period: periodLength, actualDays: actualDays, intimacyDates: formattedIntimacyDates, timestamp: lastDateObj.getTime()
             };
 
-            const isDuplicate = periodRecords.some(record => record.startDate === newRecord.startDate);
-            if (!isDuplicate) {
+            if (!periodRecords.some(record => record.startDate === newRecord.startDate)) {
                 periodRecords.push(newRecord);
                 periodRecords.sort((a, b) => b.timestamp - a.timestamp);
-                
                 localStorage.setItem('periodRecords', JSON.stringify(periodRecords));
                 
                 document.getElementById('searchInput').value = '';
                 renderHistory();
                 
                 document.getElementById('actualDays').value = '';
-                currentIntimacyDates = [];
-                renderCalendar();
+                currentIntimacyDates = []; renderCalendar();
 
-                const recordBtn = document.querySelector('.btn-record');
-                const originalText = recordBtn.innerText;
+                const recordBtn = document.querySelector('.btn-record'); const originalText = recordBtn.innerText;
                 recordBtn.innerText = "✅ 保存成功";
-                
-                // 保存成功后自动展开历史记录面板，方便查看刚保存的数据
                 openHistory();
-
                 setTimeout(() => { recordBtn.innerText = originalText; }, 1500);
             } else {
                 alert("这一天已经记录过啦！如果需要修改，请先删除历史记录中的对应项。");
             }
         }
 
-        function renderHistory(recordsToRender = periodRecords) {
+        // ================= 核心渲染逻辑：按年份生成独立页面/文件夹 ================= 
+        function renderHistory(recordsToRender = periodRecords, isSearch = false) {
             const container = document.getElementById('historyListContainer');
             container.innerHTML = ''; 
 
             if (recordsToRender.length === 0) {
-                container.innerHTML = '<div style="text-align:center; color:#999; font-size:13px; margin-top:20px;">暂无记录~</div>';
+                container.innerHTML = '<div style="text-align:center; color:#999; font-size:13px; margin-top:20px;">空空如也~ 还没有相关记录哦。</div>';
                 return;
             }
 
-            // 按年份对记录进行分组
+            // 按年份分组
             const groupedRecords = {};
             recordsToRender.forEach(record => {
-                const year = record.startDate.split('年')[0]; // 提取年份
-                if (!groupedRecords[year]) {
-                    groupedRecords[year] = [];
-                }
+                const year = record.startDate.split('年')[0]; 
+                if (!groupedRecords[year]) groupedRecords[year] = [];
                 groupedRecords[year].push(record);
             });
 
-            // 获取所有年份，并从大到小（从新到旧）排序
+            // 年份从新到旧排序
             const sortedYears = Object.keys(groupedRecords).sort((a, b) => b - a);
 
-            // 按照排好的年份渲染区块
-            sortedYears.forEach(year => {
-                // 1. 生成年份标题
-                const yearHeader = document.createElement('div');
-                yearHeader.className = 'year-header';
-                yearHeader.innerText = `${year}年`;
-                container.appendChild(yearHeader);
+            sortedYears.forEach((year, index) => {
+                // 1. 生成年份文件夹按钮
+                const folderHeader = document.createElement('div');
+                folderHeader.id = `year-folder-${year}`;
+                folderHeader.className = 'year-folder';
+                
+                // 默认策略：如果是在搜索，或者是最新的那一年（第一项），就默认展开它。
+                const shouldOpen = isSearch || index === 0;
+                if (shouldOpen) folderHeader.classList.add('open');
 
-                // 2. 生成对应年份的列表 (UL)
+                folderHeader.innerHTML = `
+                    <span>🗓️ ${year}年度 (${groupedRecords[year].length}次记录)</span>
+                    <span class="arrow">▶</span>
+                `;
+                folderHeader.onclick = () => toggleYearFolder(year);
+                container.appendChild(folderHeader);
+
+                // 2. 生成年份文件夹的详细内容
+                const folderContent = document.createElement('div');
+                folderContent.id = `year-content-${year}`;
+                folderContent.className = `year-content ${shouldOpen ? 'show' : ''}`;
+                
                 const ul = document.createElement('ul');
                 ul.className = 'history-list';
 
-                // 3. 将该年份的卡片加入列表
                 groupedRecords[year].forEach(record => {
                     const li = document.createElement('li');
                     li.className = 'history-card';
@@ -683,7 +632,7 @@
                     let intimacyHtml = '';
                     if(record.intimacyDates && record.intimacyDates.length > 0) {
                         const spanTags = record.intimacyDates.map(d => `<span>${d}</span>`).join('');
-                        intimacyHtml = `<div class="intimacy-info">👩‍❤️‍👨 爱爱记录：${spanTags}</div>`;
+                        intimacyHtml = `<div class="intimacy-info">👩‍❤️‍👨 爱爱：${spanTags}</div>`;
                     }
 
                     const actual = record.actualDays ? record.actualDays : record.period;
@@ -697,20 +646,20 @@
                     ul.appendChild(li);
                 });
 
-                container.appendChild(ul);
+                folderContent.appendChild(ul);
+                container.appendChild(folderContent);
             });
         }
 
         function searchHistory() {
             const query = document.getElementById('searchInput').value.trim();
             if (!query) {
-                renderHistory(periodRecords);
+                renderHistory(periodRecords, false);
                 return;
             }
-            const filteredRecords = periodRecords.filter(record => 
-                record.startDate.includes(query)
-            );
-            renderHistory(filteredRecords);
+            const filteredRecords = periodRecords.filter(record => record.startDate.includes(query));
+            // 传入 true，表示正在搜索，搜索出的年份目录会自动全部展开
+            renderHistory(filteredRecords, true);
         }
 
         function deleteRecord(id) {
@@ -723,7 +672,7 @@
 
         function clearAllHistory() {
             if(periodRecords.length === 0) return;
-            if(confirm('确定要清空所有的历史记录吗？不可恢复哦。')) {
+            if(confirm('警告：确定要清空所有的历史记录吗？不可恢复哦。')) {
                 periodRecords = [];
                 localStorage.removeItem('periodRecords');
                 document.getElementById('searchInput').value = '';
