@@ -173,10 +173,28 @@
         .clear-btn { padding: 0; border: none; background: none; color: #aab7c4; font-size: 13px; font-weight: normal; }
         .clear-btn:hover { color: var(--primary-color); background: none; text-decoration: underline;}
         
+        /* 年份分组标题 */
+        .year-header {
+            font-size: 15px;
+            font-weight: bold;
+            color: var(--primary-color);
+            margin: 20px 0 10px 0;
+            padding-bottom: 6px;
+            border-bottom: 2px solid #fce4ec;
+            display: flex;
+            align-items: center;
+        }
+        .year-header::before {
+            content: '🗓️';
+            margin-right: 6px;
+            font-size: 14px;
+        }
+        .year-header:first-child { margin-top: 0; }
+
         .history-list { list-style: none; padding: 0; margin: 0; }
         .history-card {
             background: #fff; border: 1px solid #f0f0f0; border-radius: 16px;
-            padding: 18px; margin-bottom: 15px; font-size: 14px; position: relative;
+            padding: 18px; margin-bottom: 12px; font-size: 14px; position: relative;
             box-shadow: 0 2px 8px rgba(0,0,0,0.02); transition: transform 0.2s;
         }
         .history-card:hover { transform: translateY(-2px); border-color: #fce4ec; box-shadow: 0 5px 15px rgba(216, 27, 96, 0.05);}
@@ -311,7 +329,7 @@
                 </div>
             </div>
 
-            <!-- 新增：隐藏/展开历史记录的按钮 -->
+            <!-- 隐藏/展开历史记录的按钮 -->
             <button class="toggle-history-btn" id="toggleHistoryBtn" onclick="toggleHistory()">📂 点击查看历史记录</button>
 
             <!-- 历史记录区域（默认隐藏） -->
@@ -323,7 +341,8 @@
                 <div class="form-group" style="margin-bottom: 15px;">
                     <input type="text" id="searchInput" placeholder="🔍 搜索年份/月份 (如: 2024)" oninput="searchHistory()" style="padding: 10px 15px; font-size: 13px;">
                 </div>
-                <ul id="historyList" class="history-list"></ul>
+                <!-- 改为动态生成年份分组容器 -->
+                <div id="historyListContainer"></div>
             </div>
         </div>
 
@@ -623,33 +642,62 @@
         }
 
         function renderHistory(recordsToRender = periodRecords) {
-            const listEl = document.getElementById('historyList');
-            listEl.innerHTML = ''; 
+            const container = document.getElementById('historyListContainer');
+            container.innerHTML = ''; 
 
             if (recordsToRender.length === 0) {
-                listEl.innerHTML = '<li style="text-align:center; color:#999; font-size:13px; margin-top:20px;">暂无记录~</li>';
+                container.innerHTML = '<div style="text-align:center; color:#999; font-size:13px; margin-top:20px;">暂无记录~</div>';
                 return;
             }
 
+            // 按年份对记录进行分组
+            const groupedRecords = {};
             recordsToRender.forEach(record => {
-                const li = document.createElement('li');
-                li.className = 'history-card';
-                
-                let intimacyHtml = '';
-                if(record.intimacyDates && record.intimacyDates.length > 0) {
-                    const spanTags = record.intimacyDates.map(d => `<span>${d}</span>`).join('');
-                    intimacyHtml = `<div class="intimacy-info">👩‍❤️‍👨 爱爱记录：${spanTags}</div>`;
+                const year = record.startDate.split('年')[0]; // 提取年份
+                if (!groupedRecords[year]) {
+                    groupedRecords[year] = [];
                 }
+                groupedRecords[year].push(record);
+            });
 
-                const actual = record.actualDays ? record.actualDays : record.period;
+            // 获取所有年份，并从大到小（从新到旧）排序
+            const sortedYears = Object.keys(groupedRecords).sort((a, b) => b - a);
 
-                li.innerHTML = `
-                    <div class="date">${record.startDate}</div>
-                    <div class="details">周期：${record.cycle}天 | 预计：${record.period}天 | <b style="color:var(--text-main)">实际：${actual}天</b></div>
-                    ${intimacyHtml}
-                    <button class="delete-item" onclick="deleteRecord(${record.id})" title="删除此条">×</button>
-                `;
-                listEl.appendChild(li);
+            // 按照排好的年份渲染区块
+            sortedYears.forEach(year => {
+                // 1. 生成年份标题
+                const yearHeader = document.createElement('div');
+                yearHeader.className = 'year-header';
+                yearHeader.innerText = `${year}年`;
+                container.appendChild(yearHeader);
+
+                // 2. 生成对应年份的列表 (UL)
+                const ul = document.createElement('ul');
+                ul.className = 'history-list';
+
+                // 3. 将该年份的卡片加入列表
+                groupedRecords[year].forEach(record => {
+                    const li = document.createElement('li');
+                    li.className = 'history-card';
+                    
+                    let intimacyHtml = '';
+                    if(record.intimacyDates && record.intimacyDates.length > 0) {
+                        const spanTags = record.intimacyDates.map(d => `<span>${d}</span>`).join('');
+                        intimacyHtml = `<div class="intimacy-info">👩‍❤️‍👨 爱爱记录：${spanTags}</div>`;
+                    }
+
+                    const actual = record.actualDays ? record.actualDays : record.period;
+
+                    li.innerHTML = `
+                        <div class="date">${record.startDate}</div>
+                        <div class="details">周期：${record.cycle}天 | 预计：${record.period}天 | <b style="color:var(--text-main)">实际：${actual}天</b></div>
+                        ${intimacyHtml}
+                        <button class="delete-item" onclick="deleteRecord(${record.id})" title="删除此条">×</button>
+                    `;
+                    ul.appendChild(li);
+                });
+
+                container.appendChild(ul);
             });
         }
 
