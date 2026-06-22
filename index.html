@@ -56,7 +56,7 @@
         @media (max-width: 800px) { .layout-wrapper { flex-direction: column; } .left-panel { max-height: none; } }
 
         h1, h2 { color: var(--primary-color); margin-top: 0; font-weight: 600; }
-        h1 { font-size: 20px; margin-bottom: 0; letter-spacing: 1px;}
+        h1 { font-size: 20px; margin-bottom: 0; letter-spacing: 1px; display: flex; align-items: center;}
         h2 { font-size: 18px; margin-bottom: 20px; display: flex; align-items: center; gap: 8px;}
         .form-group { margin-bottom: 20px; }
         label { display: block; margin-bottom: 8px; color: var(--text-muted); font-size: 13px; font-weight: 600; letter-spacing: 0.5px; }
@@ -71,9 +71,12 @@
         .btn-record { background-color: transparent; color: var(--primary-color); flex: 1; }
         .btn-record:hover { background-color: var(--primary-light); transform: translateY(-2px);}
         
-        /* 切换账号按钮特殊样式 */
+        /* 切换账号/换房间按钮样式 */
         .btn-logout { padding: 8px 12px; font-size: 12px; border-radius: 10px; flex: none; margin: 0; border: 1px solid #e0e0e0; color: var(--text-muted); background: #fafafa; font-weight: normal; }
-        .btn-logout:hover { background: #f0f0f0; border-color: #ccc; transform: translateY(-1px); }
+        .btn-logout:hover { background: #f0f0f0; border-color: #ccc; transform: translateY(-1px); color: var(--primary-color); }
+
+        /* 当前房间号徽章样式 */
+        #roomBadge { font-size: 12px; color: var(--primary-hover); background: var(--primary-light); padding: 4px 10px; border-radius: 10px; margin-left: 10px; font-weight: bold; border: 1px solid #f8bbd0; display: none; }
 
         .result-card { margin-top: 25px; padding: 22px; background: linear-gradient(to right bottom, #fff, var(--primary-light)); border-radius: 18px; display: none; border-left: 5px solid var(--primary-color); box-shadow: 0 5px 15px rgba(0,0,0,0.03); }
         .result-card.show { display: block; animation: slideUp 0.4s ease-out forwards; }
@@ -166,10 +169,13 @@
     <div class="layout-wrapper">
         <div class="panel left-panel">
             
-            <!-- 顶部标题与切换账号按钮 -->
+            <!-- 顶部标题与切换账号/房间按钮 -->
             <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px;">
-                <h1>🌸 周期与预测记录</h1>
-                <button class="btn-logout" onclick="logout()">🚪 切换账号</button>
+                <h1>🌸 周期记录 <span id="roomBadge"></span></h1>
+                <div style="display: flex; gap: 8px;">
+                    <button class="btn-logout" onclick="switchRoom()">🔄 换房间</button>
+                    <button class="btn-logout" onclick="logout()">🚪 退出</button>
+                </div>
             </div>
             
             <div class="form-group">
@@ -260,7 +266,6 @@
 
     <script>
         // =========================================================
-        // 这次帮你把配置直接内置写好了，不用再修改任何代码！
         const API_URL = "https://shengliqi.qaz123.xyz"; 
         // =========================================================
 
@@ -293,6 +298,16 @@
             });
         };
 
+        function updateRoomBadge() {
+            const badge = document.getElementById('roomBadge');
+            if(currentPin) {
+                badge.innerText = `房间号: ${currentPin}`;
+                badge.style.display = "inline-block";
+            } else {
+                badge.style.display = "none";
+            }
+        }
+
         async function confirmPin(pin) {
             if(!pin || pin.length !== 4) return alert('请输入4位数字房间号哦！');
             document.getElementById('lockBtnRight').innerText = "连接云端中...";
@@ -301,6 +316,7 @@
             if(success) {
                 currentPin = pin;
                 localStorage.setItem('cloudAppPin', pin);
+                updateRoomBadge();
                 document.getElementById('lockScreen').style.display = 'none';
             } else {
                 document.getElementById('lockBtnRight').innerText = "进入空间";
@@ -320,6 +336,7 @@
                     globalIntimacyDates = data.globalIntimacyDates || [];
                     renderCalendar();
                     renderHistory();
+                    updateRoomBadge(); // 拉取成功后更新标签
                     return true;
                 } else {
                     alert("云端密码校验失败或接口未返回正常数据！");
@@ -348,9 +365,34 @@
             }
         }
 
-        // ================= 账号退出逻辑 =================
+        // ================= 账号切换与退出逻辑 =================
+        // 直接无缝换房间（不用刷新页面）
+        async function switchRoom() {
+            const newPin = prompt(`📍当前所处房间：${currentPin}\n\n请输入你想无缝切换的4位数字房间号：`);
+            if (newPin === null) return; // 点击了取消
+            
+            if (!/^\d{4}$/.test(newPin)) {
+                alert("房间号必须是4位纯数字哦！");
+                return;
+            }
+            if (newPin === currentPin) {
+                alert("你已经在当前房间啦！");
+                return;
+            }
+
+            // 尝试直接加载新房间数据（背景自动覆盖，无须刷新网页）
+            const success = await loadFromCloud(newPin);
+            if (success) {
+                currentPin = newPin;
+                localStorage.setItem('cloudAppPin', newPin);
+                updateRoomBadge();
+                alert(`✅ 成功无缝切换至房间：${newPin}`);
+            }
+        }
+
+        // 彻底退出锁屏
         function logout() {
-            if(confirm('确定要退出当前房间号，切换到其他账号吗？')) {
+            if(confirm('确定要退出当前房间并锁屏吗？')) {
                 localStorage.removeItem('cloudAppPin');
                 periodRecords = [];
                 globalIntimacyDates = [];
