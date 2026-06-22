@@ -146,6 +146,7 @@
 </head>
 <body>
 
+    <!-- 密码锁屏界面 -->
     <div id="lockScreen" class="lock-screen">
         <div class="lock-box">
             <div style="font-size: 45px; margin-bottom: 10px;">☁️</div>
@@ -161,9 +162,11 @@
         </div>
     </div>
 
+    <!-- 主界面 -->
     <div class="layout-wrapper">
         <div class="panel left-panel">
             
+            <!-- 顶部标题与切换账号按钮 -->
             <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px;">
                 <h1>🌸 周期与预测记录</h1>
                 <button class="btn-logout" onclick="logout()">🚪 切换账号</button>
@@ -257,6 +260,7 @@
 
     <script>
         // =========================================================
+        // 这次帮你把配置直接内置写好了，不用再修改任何代码！
         const API_URL = "https://shengliqi.qaz123.xyz"; 
         // =========================================================
 
@@ -268,4 +272,395 @@
         // ================= 云端通讯与解锁逻辑 =================
         window.onload = async function() {
             if (currentPin) {
-                document.getElementById('lockScreen').style.display = 'none
+                document.getElementById('lockScreen').style.display = 'none';
+                await loadFromCloud(currentPin);
+            } else {
+                document.getElementById('pinInput').addEventListener("keyup", function(event) {
+                    if (event.key === "Enter") confirmPin(this.value);
+                });
+            }
+
+            const dateInput = document.getElementById('lastDate');
+            dateInput.valueAsDate = new Date();
+            fetchWeather(); 
+            displayRandomTip(); 
+
+            dateInput.addEventListener('change', function(e) {
+                if(e.target.value) {
+                    currentCalDate = new Date(e.target.value);
+                    renderCalendar();
+                }
+            });
+        };
+
+        async function confirmPin(pin) {
+            if(!pin || pin.length !== 4) return alert('请输入4位数字房间号哦！');
+            document.getElementById('lockBtnRight').innerText = "连接云端中...";
+            
+            const success = await loadFromCloud(pin);
+            if(success) {
+                currentPin = pin;
+                localStorage.setItem('cloudAppPin', pin);
+                document.getElementById('lockScreen').style.display = 'none';
+            } else {
+                document.getElementById('lockBtnRight').innerText = "进入空间";
+            }
+        }
+
+        async function loadFromCloud(pin) {
+            try {
+                const response = await fetch(API_URL, {
+                    method: "GET",
+                    headers: { "X-Auth-Pin": pin }
+                });
+                
+                if (response.ok) {
+                    const data = await response.json();
+                    periodRecords = data.periodRecords || [];
+                    globalIntimacyDates = data.globalIntimacyDates || [];
+                    renderCalendar();
+                    renderHistory();
+                    return true;
+                } else {
+                    alert("云端密码校验失败或接口未返回正常数据！");
+                    return false;
+                }
+            } catch (error) {
+                alert("无法连接到你的云端接口！请确保网络畅通。");
+                console.error(error);
+                return false;
+            }
+        }
+
+        async function syncToCloud() {
+            if(!currentPin) return;
+            try {
+                await fetch(API_URL, {
+                    method: "POST",
+                    headers: { 
+                        "X-Auth-Pin": currentPin,
+                        "Content-Type": "application/json"
+                    },
+                    body: JSON.stringify({ periodRecords, globalIntimacyDates })
+                });
+            } catch (error) {
+                console.error("同步到云端失败", error);
+            }
+        }
+
+        // ================= 账号退出逻辑 =================
+        function logout() {
+            if(confirm('确定要退出当前房间号，切换到其他账号吗？')) {
+                localStorage.removeItem('cloudAppPin');
+                periodRecords = [];
+                globalIntimacyDates = [];
+                location.reload();
+            }
+        }
+
+        function resetPinData() {
+            if(confirm("【警告】这会清除你手机上可能残留的旧本地记录，确定要重置吗？")) {
+                localStorage.removeItem('secretPin');
+                localStorage.removeItem('cloudAppPin');
+                localStorage.removeItem('periodRecords');
+                localStorage.removeItem('globalIntimacyDates');
+                location.reload();
+            }
+        }
+
+        // ================= 天气与贴士 =================
+        const periodTips = [
+            "尽量不要碰冰冷的饮料和生冷食物哦，多喝点温热水。🍵",
+            "这几天要注意腹部保暖，可以贴个暖宝宝，避免着凉。🧣",
+            "如果肚子有点痛，可以尝试泡一杯红糖姜茶，暖暖身子。🤎",
+            "避免剧烈运动和重体力劳动，可以选择散步或轻柔的瑜伽。🧘‍♀️",
+            "保持清淡饮食，少吃辛辣刺激的食物，多吃富含铁和维生素的食物。🍎",
+            "如果感觉情绪低落是正常的激素变化，吃块巧克力，听听轻音乐放松一下吧。🍫"
+        ];
+        function displayRandomTip() { document.getElementById('dailyTip').innerText = periodTips[Math.floor(Math.random() * periodTips.length)]; }
+
+        function fetchWeather() {
+            if (navigator.geolocation) {
+                navigator.geolocation.getCurrentPosition(
+                    (position) => {
+                        fetch(`https://api.open-meteo.com/v1/forecast?latitude=${position.coords.latitude}&longitude=${position.coords.longitude}&current_weather=true`)
+                            .then(res => res.json()).then(data => updateWeatherUI(data.current_weather.temperature, data.current_weather.weathercode))
+                            .catch(err => setWeatherFallback());
+                    }, () => setWeatherFallback()
+                );
+            } else setWeatherFallback();
+        }
+
+        function updateWeatherUI(temp, code) {
+            let icon = '🌤️'; let desc = '天气不错，保持好心情'; let suggestion = '';
+            if(code === 0) { icon = '☀️'; desc = '晴朗'; }
+            else if(code >= 1 && code <= 3) { icon = '⛅'; desc = '多云'; }
+            else if(code === 45 || code === 48) { icon = '🌫️'; desc = '雾天'; }
+            else if(code >= 51 && code <= 67) { icon = '🌧️'; desc = '雨天'; }
+            else if(code >= 71 && code <= 77) { icon = '❄️'; desc = '雪天'; }
+            else if(code >= 80 && code <= 82) { icon = '🌦️'; desc = '阵雨'; }
+            else if(code >= 95 && code <= 99) { icon = '⛈️'; desc = '雷雨'; }
+            if(temp < 15) suggestion += '（气温偏低，记得添衣）'; else if(temp > 30) suggestion += '（气温较高，多喝水哦）';
+            document.getElementById('weatherIcon').innerText = icon;
+            document.getElementById('weatherTemp').innerText = `今天气温 ${temp}°C | ${desc}`;
+            document.getElementById('weatherDesc').innerText = suggestion || '按你喜欢的方式度过今天吧';
+        }
+
+        function setWeatherFallback() {
+            document.getElementById('weatherIcon').innerText = '🏠';
+            document.getElementById('weatherTemp').innerText = '未能获取位置信息';
+            document.getElementById('weatherDesc').innerText = '不论天气如何，都要照顾好自己哦';
+        }
+
+        const formatDate = (date) => {
+            return `${date.getFullYear()}年${String(date.getMonth() + 1).padStart(2, '0')}月${String(date.getDate()).padStart(2, '0')}日`;
+        };
+
+        // ================= 日历核心逻辑 =================
+        function renderCalendar() {
+            const year = currentCalDate.getFullYear(); const month = currentCalDate.getMonth();
+            document.getElementById('calMonthYear').innerText = `${year}年 ${month + 1}月`;
+            
+            const periodBackgrounds = new Set();
+            periodRecords.forEach(record => {
+                let sDate = new Date(record.timestamp);
+                let days = record.actualDays || record.period;
+                for(let i = 0; i < days; i++) {
+                    let d = new Date(sDate); d.setDate(d.getDate() + i);
+                    periodBackgrounds.add(`${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`);
+                }
+            });
+
+            const firstDayIndex = new Date(year, month, 1).getDay();
+            const daysInMonth = new Date(year, month + 1, 0).getDate(); 
+            const calDaysEl = document.getElementById('calDays');
+            calDaysEl.innerHTML = '';
+            
+            for(let i = 0; i < firstDayIndex; i++) {
+                const emptyDiv = document.createElement('div');
+                emptyDiv.className = 'cal-day empty'; calDaysEl.appendChild(emptyDiv);
+            }
+            
+            for(let i = 1; i <= daysInMonth; i++) {
+                const dateStr = `${year}-${String(month + 1).padStart(2, '0')}-${String(i).padStart(2, '0')}`;
+                
+                const isHeart = globalIntimacyDates.includes(dateStr); 
+                const isPeriod = periodBackgrounds.has(dateStr); 
+
+                const dayDiv = document.createElement('div');
+                let classes = 'cal-day';
+                if(isPeriod) classes += ' period-day';
+                if(isHeart) classes += ' intimacy-day';
+
+                dayDiv.className = classes;
+                dayDiv.innerText = i;
+                
+                dayDiv.onclick = () => {
+                    if(isHeart) {
+                        globalIntimacyDates = globalIntimacyDates.filter(d => d !== dateStr);
+                    } else {
+                        globalIntimacyDates.push(dateStr);
+                    }
+                    syncToCloud(); 
+                    renderCalendar();
+                    renderHistory(); 
+                };
+                
+                calDaysEl.appendChild(dayDiv);
+            }
+        }
+
+        function changeMonth(offset) {
+            currentCalDate.setMonth(currentCalDate.getMonth() + offset);
+            renderCalendar();
+        }
+
+        // ================= 预测与记录 =================
+        function predictOnly() {
+            const lastDate = document.getElementById('lastDate').value;
+            const cycleLength = parseInt(document.getElementById('cycleLength').value);
+            const periodLength = parseInt(document.getElementById('periodLength').value);
+            if(!lastDate || !cycleLength || !periodLength) return alert("请填完左侧的必填信息哦！");
+
+            const lastDateObj = new Date(lastDate);
+            const nextStartObj = new Date(lastDateObj); nextStartObj.setDate(nextStartObj.getDate() + cycleLength);
+            const nextEndObj = new Date(nextStartObj); nextEndObj.setDate(nextEndObj.getDate() + periodLength - 1); 
+            const ovulationObj = new Date(nextStartObj); ovulationObj.setDate(ovulationObj.getDate() - 14);
+            const fertileStart = new Date(ovulationObj); fertileStart.setDate(fertileStart.getDate() - 4);
+            const fertileEnd = new Date(ovulationObj); fertileEnd.setDate(fertileEnd.getDate() + 1);
+
+            document.getElementById('nextStartDate').innerText = formatDate(nextStartObj);
+            document.getElementById('nextEndDate').innerText = formatDate(nextEndObj);
+            document.getElementById('fertileWindow').innerText = `${formatDate(fertileStart)} 至 ${formatDate(fertileEnd)}`;
+
+            const resultCard = document.getElementById('result');
+            resultCard.classList.remove('show'); void resultCard.offsetWidth; resultCard.classList.add('show');
+            displayRandomTip();
+        }
+
+        async function saveOnly() {
+            const lastDate = document.getElementById('lastDate').value;
+            const cycleLength = parseInt(document.getElementById('cycleLength').value);
+            const periodLength = parseInt(document.getElementById('periodLength').value);
+            const actualDaysInput = document.getElementById('actualDays').value;
+            const actualDays = actualDaysInput ? parseInt(actualDaysInput) : periodLength;
+
+            if(!lastDate || !cycleLength || !periodLength) return alert("请填完左侧的基础信息才能保存哦！");
+
+            const lastDateObj = new Date(lastDate);
+            const newRecord = {
+                id: Date.now(), startDate: formatDate(lastDateObj), cycle: cycleLength,
+                period: periodLength, actualDays: actualDays, timestamp: lastDateObj.getTime()
+            };
+
+            if (!periodRecords.some(record => record.startDate === newRecord.startDate)) {
+                periodRecords.push(newRecord);
+                periodRecords.sort((a, b) => b.timestamp - a.timestamp);
+                
+                await syncToCloud(); 
+                
+                document.getElementById('searchInput').value = '';
+                document.getElementById('actualDays').value = '';
+                renderHistory();
+                renderCalendar(); 
+
+                const recordBtn = document.querySelector('.btn-record'); const originalText = recordBtn.innerText;
+                recordBtn.innerText = "✅ 云端已记录";
+                openHistory();
+                setTimeout(() => { recordBtn.innerText = originalText; }, 1500);
+            } else alert("这一天已经记录过啦！");
+        }
+
+        // ================= 历史数据渲染 =================
+        function toggleHistory() {
+            const content = document.getElementById('historyContent');
+            const btn = document.getElementById('toggleHistoryBtn');
+            if (content.classList.contains('show')) {
+                content.classList.remove('show'); btn.innerHTML = '📂 点击查看云端档案';
+            } else {
+                content.classList.add('show'); btn.innerHTML = '📂 收起云端档案';
+            }
+        }
+
+        function openHistory() {
+            document.getElementById('historyContent').classList.add('show');
+            document.getElementById('toggleHistoryBtn').innerHTML = '📂 收起云端档案';
+        }
+
+        function toggleYearFolder(year) {
+            const folderContent = document.getElementById(`year-content-${year}`);
+            const folderHeader = document.getElementById(`year-folder-${year}`);
+            if (folderContent.classList.contains('show')) {
+                folderContent.classList.remove('show'); folderHeader.classList.remove('open');
+            } else {
+                folderContent.classList.add('show'); folderHeader.classList.add('open');
+            }
+        }
+
+        function renderHistory(recordsToRender = periodRecords, isSearch = false) {
+            const container = document.getElementById('historyListContainer');
+            container.innerHTML = ''; 
+
+            if (recordsToRender.length === 0) {
+                container.innerHTML = '<div style="text-align:center; color:#999; font-size:13px; margin-top:20px;">云端空空如也~ 还没有生理期记录哦。</div>';
+                return;
+            }
+
+            const allSortedRecords = [...periodRecords].sort((a,b) => a.timestamp - b.timestamp);
+            const recordBucket = {};
+            recordsToRender.forEach(r => recordBucket[r.id] = []);
+
+            globalIntimacyDates.forEach(dateStr => {
+                const parts = dateStr.split('-');
+                const t = new Date(parts[0], parts[1]-1, parts[2]).getTime();
+                
+                let targetId = null;
+                for(let i=0; i<allSortedRecords.length; i++) {
+                    const currentRec = allSortedRecords[i];
+                    const nextRec = allSortedRecords[i+1];
+                    if(t >= currentRec.timestamp) {
+                        if(!nextRec || t < nextRec.timestamp) { targetId = currentRec.id; break; }
+                    }
+                }
+                if(targetId && recordBucket[targetId]) { recordBucket[targetId].push(dateStr); }
+            });
+
+            const groupedRecords = {};
+            recordsToRender.forEach(record => {
+                const year = record.startDate.split('年')[0]; 
+                if (!groupedRecords[year]) groupedRecords[year] = [];
+                groupedRecords[year].push(record);
+            });
+
+            const sortedYears = Object.keys(groupedRecords).sort((a, b) => b - a);
+
+            sortedYears.forEach((year, index) => {
+                const folderHeader = document.createElement('div');
+                folderHeader.id = `year-folder-${year}`;
+                folderHeader.className = 'year-folder';
+                const shouldOpen = isSearch || index === 0;
+                if (shouldOpen) folderHeader.classList.add('open');
+
+                folderHeader.innerHTML = `<span>🗓️ ${year}年度 (${groupedRecords[year].length}次记录)</span><span class="arrow">▶</span>`;
+                folderHeader.onclick = () => toggleYearFolder(year);
+                container.appendChild(folderHeader);
+
+                const folderContent = document.createElement('div');
+                folderContent.id = `year-content-${year}`;
+                folderContent.className = `year-content ${shouldOpen ? 'show' : ''}`;
+                const ul = document.createElement('ul'); ul.className = 'history-list';
+
+                groupedRecords[year].forEach(record => {
+                    const li = document.createElement('li');
+                    li.className = 'history-card';
+                    
+                    let intimacyHtml = '';
+                    const relatedIntimacies = recordBucket[record.id];
+                    if(relatedIntimacies && relatedIntimacies.length > 0) {
+                        relatedIntimacies.sort();
+                        const spanTags = relatedIntimacies.map(d => {
+                            const p = d.split('-'); return `<span>${p[1]}月${p[2]}日</span>`;
+                        }).join('');
+                        intimacyHtml = `<div class="intimacy-info">👩‍❤️‍👨 此周期爱爱：${spanTags}</div>`;
+                    }
+
+                    const actual = record.actualDays ? record.actualDays : record.period;
+
+                    li.innerHTML = `
+                        <div class="date">${record.startDate}</div>
+                        <div class="details">周期：${record.cycle}天 | 预计：${record.period}天 | <b style="color:var(--text-main)">实际：${actual}天</b></div>
+                        ${intimacyHtml}
+                        <button class="delete-item" onclick="deleteRecord(${record.id})" title="删除此条">×</button>
+                    `;
+                    ul.appendChild(li);
+                });
+                folderContent.appendChild(ul); container.appendChild(folderContent);
+            });
+        }
+
+        function searchHistory() {
+            const query = document.getElementById('searchInput').value.trim();
+            if (!query) { renderHistory(periodRecords, false); return; }
+            renderHistory(periodRecords.filter(record => record.startDate.includes(query)), true);
+        }
+
+        async function deleteRecord(id) {
+            if(confirm('确定要删除这条云端记录吗？（日历上的红心不受影响）')) {
+                periodRecords = periodRecords.filter(record => record.id !== id);
+                await syncToCloud();
+                searchHistory(); renderCalendar(); 
+            }
+        }
+
+        async function clearAllHistory() {
+            if(periodRecords.length === 0 && globalIntimacyDates.length === 0) return;
+            if(confirm('警告：确定要彻底清空云端的所有档案和小红心吗？不可恢复哦。')) {
+                periodRecords = []; globalIntimacyDates = [];
+                await syncToCloud();
+                document.getElementById('searchInput').value = '';
+                renderHistory(); renderCalendar();
+            }
+        }
+    </script>
+</body>
+</html>
